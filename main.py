@@ -25,12 +25,12 @@ def run_4h_tasks():
     # New markets (every 4h)
     new_markets = get_new_markets(df)
     if new_markets:
-        send_telegram_message(new_markets)
+        send_telegram_message(f"***New markets***:\n\n{new_markets}")
 
     # High movers (every 4h)
     high_movement = get_high_movement(df)
     if high_movement:
-        send_telegram_message(high_movement)
+        send_telegram_message(f"***High movers***:\n\n{high_movement}")
 
 def run_daily_tasks():
     print(f"[{datetime.now()}] Running daily tasks...")
@@ -41,7 +41,7 @@ def run_daily_tasks():
     # Large transactions (every day)
     large_tx = get_large_tx(df)
     if large_tx:
-        send_telegram_message(large_tx)
+        send_telegram_message(f"***Large transactions***:\n\n{large_tx}")
 
 # --- Scheduling ---
 # Run every 4 hours
