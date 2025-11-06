@@ -209,7 +209,7 @@ def get_large_tx(df):
 
         cond1 = summary['total_value'] >= THRESHOLD
         cond2 = summary['total_value'] <= -THRESHOLD
-        cond3 = summary['date'] > (datetime.now(timezone.utc) - timedelta(days=1))
+        cond3 = summary['date'] > (datetime.now() - timedelta(days=1))
         large_tx = summary[cond1 | cond2 & cond3]
 
         return large_tx
