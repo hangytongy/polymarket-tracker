@@ -1,0 +1,8 @@
+requests
+matplotlib
+dateutil
+pandas
+aiohttp
+nest_asyncio
+python-dotenv
+schedule
