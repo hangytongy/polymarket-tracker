@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 import requests
 import os
+import html
 
 load_dotenv()
 
@@ -10,6 +11,9 @@ TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 MAX_MESSAGE_LENGTH = 4096  # Telegram's hard limit
 
 def send_telegram_message(text):
+
+    text = html.escape(text)
+    
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     chat_id = TELEGRAM_CHAT_ID
 
@@ -23,14 +27,14 @@ def send_telegram_message(text):
                 "chat_id": ids[0],
                 "message_thread_id": ids[1],
                 "text": chunk,
-                "parse_mode": "Markdown",
+                "parse_mode": "HTML",
                 "disable_web_page_preview": True
             }
         else:
             payload = {
                 "chat_id": chat_id,
                 "text": chunk,
-                "parse_mode": "Markdown",
+                "parse_mode": "HTML",
                 "disable_web_page_preview": True
             }
 
