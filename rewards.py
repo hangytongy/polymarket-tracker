@@ -34,6 +34,13 @@ try:
             ob_data = get_orderbook_data(token_id)
             #get reward bid and ask spread
             reward_ob_data = get_reward_ob_data(reward_data,ob_data)
+            #get minimum order size
+            min_size = int(reward_data['reward_min_size'])
+
+            if buy_in_size < min_size:
+                size = min_size
+            else:
+                size = buy_in_size
 
             #get reward bid range
             reward_bid = reward_ob_data['bids']
@@ -62,18 +69,18 @@ try:
                         order_id = order['id']
                         cancel_order(order_id)
                         bid_price = reward_mid_range
-                        place_order(token_id,bid_price,buy_in_size)
+                        place_order(token_id,bid_price,size)
                         print(f"placed order at {bid_price} for {market_id} and {side}")
-                        message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {market_id} and {side}"
+                        message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {market_id} and {side} and size {size}"
                         send_telegram_message(message)
 
 
             else:
                 print(f'No current order in this market')
                 bid_price = reward_mid_range
-                place_order(token_id,bid_price,buy_in_size)
+                place_order(token_id,bid_price,size)
                 print(f"placed order at {bid_price} for {market_id} and {side}")
-                message = f"placed order at {bid_price} for {market_id} and {side}"
+                message = f"placed order at {bid_price} for {market_id} and {side} at size {size}"
                 send_telegram_message(message)
 
 
