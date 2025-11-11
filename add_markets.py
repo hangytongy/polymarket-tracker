@@ -48,7 +48,7 @@ for reward in all_rewards:
         insert_into_file = input("do you want to put the above into file? (Y/N)")
         
         if insert_into_file.lower() == "y":
-            new_row = [market_id,outcome]
+            new_row = [question.lower(),market_id,outcome]
             with open("markets.csv", "a", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(new_row)

@@ -11,7 +11,7 @@ try:
     # === STEP 1: Load CSV ===
     file_path = "markets.csv"   # Change to your actual CSV file path
 
-    df = pd.read_csv(file_path, dtype={'market_id': str, 'side': str})
+    df = pd.read_csv(file_path, usecols=['market_id', 'side'], dtype={'market_id': str, 'side': str})
 
     # === STEP 2: Validate columns ===
     required_cols = {'market_id', 'side'}
@@ -30,6 +30,7 @@ try:
         reward_data, token_id = get_wanted_rewards_market(all_rewards,market_id,side)
 
         if token_id:
+            question = reward_data['question']
             #get market orderbook
             ob_data = get_orderbook_data(token_id)
             #get reward bid and ask spread
@@ -70,8 +71,8 @@ try:
                         cancel_order(order_id)
                         bid_price = reward_mid_range
                         place_order(token_id,bid_price,size)
-                        print(f"placed order at {bid_price} for {market_id} and {side}")
-                        message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {market_id} and {side} and size {size}"
+                        print(f"placed order at {bid_price} for {question} and {side}")
+                        message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {question} and {side} and size {size}"
                         send_telegram_message(message)
 
 
@@ -79,8 +80,8 @@ try:
                 print(f'No current order in this market')
                 bid_price = reward_mid_range
                 place_order(token_id,bid_price,size)
-                print(f"placed order at {bid_price} for {market_id} and {side}")
-                message = f"placed order at {bid_price} for {market_id} and {side} at size {size}"
+                print(f"placed order at {bid_price} for {question} and {side}")
+                message = f"placed order at {bid_price} for {question} and {side} at size {size}"
                 send_telegram_message(message)
 
 

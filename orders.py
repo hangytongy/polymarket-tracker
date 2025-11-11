@@ -2,6 +2,7 @@ from py_clob_client.client import ClobClient
 from py_clob_client.clob_types import OrderArgs, OrderType
 from py_clob_client.order_builder.constants import BUY, SELL
 from py_clob_client.clob_types import OpenOrderParams
+from py_clob_client.clob_types import TradeParams
 import os
 import dotenv
 
@@ -50,5 +51,33 @@ def cancel_order(order_id):
     order_id = order_id #"0xabcdef..."  # the order ID you want to cancel
     resp     = client.cancel(order_id)
     print("Cancel response:", resp)
+
+
+def get_trades():
+    trades = client.get_trades(
+        TradeParams(
+            maker_address=client.get_address()
+        )
+    )
+    return trades
+
+def get_all_orders():
+    # Example: get all active orders from your account (no filter)
+    open_orders = client.get_orders(OpenOrderParams())
+
+    return open_orders
+
+def get_all_orders_id(open_orders):
+
+    all_order_ids = [order['id'] for order in open_orders]
+
+    return all_order_ids
+
+def cancel_all_orders(all_order_ids):
+
+    for order_id in all_order_ids:
+        resp     = client.cancel(order_id)
+        print("Cancel response:", resp)
+
 
 
