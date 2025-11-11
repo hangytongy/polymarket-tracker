@@ -17,12 +17,14 @@ for _, row in df.iterrows():
     if remove_question.lower() == row['question'].lower():
 
         filtered_orders = get_current_orders(market_id)
-        all_order_ids = get_all_orders_id(filtered_orders)
-        cancel_all_orders(all_order_ids)
 
-        df = df[df['market_id'] != market_id]
-        df.to_csv(file_path, index=False)
-        print(f"✅ Removed market_id {market_id} from {file_path}")
+        if not filtered_orders.empty:
+            all_order_ids = get_all_orders_id(filtered_orders)
+            cancel_all_orders(all_order_ids)
+
+            df = df[df['market_id'] != market_id]
+            df.to_csv(file_path, index=False)
+            print(f"✅ Removed market_id {market_id} from {file_path}")
 
 
 
