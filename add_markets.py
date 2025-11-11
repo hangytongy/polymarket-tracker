@@ -54,7 +54,9 @@ for reward in all_rewards:
                 writer.writerow(new_row)
             print(f"new row added for market{market_id} with outcome {outcome}")
             
-if not market_id:
+try: 
+    print(market_id)
+except:
     print("market not found in rewards, finding closes matches")
     results = recommend_similar_questions(question, all_rewards, top_n=5)
     if results:
