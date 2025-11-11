@@ -89,7 +89,7 @@ try:
             print(f'No reward found for {market_id} and {side}')
             filtered_orders = get_current_orders(market_id)
 
-            if not filtered_orders.empty:
+            if filtered_orders:
                 
                 all_order_ids = get_all_orders_id(filtered_orders)
                 cancel_all_orders(all_order_ids)
