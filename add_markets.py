@@ -1,10 +1,13 @@
 import csv
 from sentence_transformers import SentenceTransformer, util
+from utils import get_all_rewards
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 question = input("Input the polymarket full question : ")
 outcome = input("Input the desired outcome : ")
+
+all_rewards = get_all_rewards()
 
 def recommend_similar_questions(user_input, rewards, top_n=3, threshold=0.3):
     """
@@ -39,7 +42,8 @@ for reward in all_rewards:
     if reward['question'].lower() == question.lower() and any(
         outcome.lower() in o.lower() for o in reward['outcomes']
     ):
-        print(f"market id = {market_id}")
+        market_id = reward['market_id']
+        print(f"market id = {market_id }")
         
         insert_into_file = input("do you want to put the above into file? (Y/N)")
         
@@ -50,13 +54,13 @@ for reward in all_rewards:
                 writer.writerow(new_row)
             print(f"new row added for market{market_id} with outcome {outcome}")
             
-    else:
-        print("market not found in rewards, finding closes matches")
-        results = recommend_similar_questions(user_input, rewards, top_n=5)
-        if results:
-            print("\n🔍 Closest matches found:")
-            for q, score in results:
-                print(f"• {q}  (similarity: {score:.2f})")
+if not market_id:
+    print("market not found in rewards, finding closes matches")
+    results = recommend_similar_questions(question, all_rewards, top_n=5)
+    if results:
+        print("\n🔍 Closest matches found:")
+        for q, score in results:
+            print(f"• {q}  (similarity: {score:.2f})")
                 
-        else:
-            print("❌ No similar questions found.")
+    else:
+        print("❌ No similar questions found.")
