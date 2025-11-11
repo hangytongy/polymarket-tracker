@@ -49,7 +49,7 @@ for reward in all_rewards:
         
         if insert_into_file.lower == "y":
             new_row = [market_id,outcome]
-            with open("market.csv", "a", newline="") as f:
+            with open("markets.csv", "a", newline="") as f:
                 writer = csv.writer(f)
                 writer.writerow(new_row)
             print(f"new row added for market{market_id} with outcome {outcome}")
@@ -58,7 +58,7 @@ try:
     print(market_id)
 except:
     print("market not found in rewards, finding closes matches")
-    results = recommend_similar_questions(question, all_rewards, top_n=5)
+    results = recommend_similar_questions(question, all_rewards, top_n=9)
     if results:
         print("\n🔍 Closest matches found:")
         for q, score in results:
