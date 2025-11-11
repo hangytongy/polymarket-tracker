@@ -1,0 +1,15 @@
+{
+    "apps": [
+      {
+        "name": "polymarkets_rewards",
+        "script": "venv/bin/python3",
+        "cron_restart": "*/2 * * * *",
+        "autorestart" : false,
+        "time": true,
+        "args" : "rewards.py",
+        "cwd" : "/root/polymarket-tracker"
+      }
+
+    ]
+  }
+  

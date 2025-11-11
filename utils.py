@@ -410,6 +410,16 @@ def get_all_rewards():
     else:
         return None
 
+def get_wanted_rewards_market(all_rewards,market_id : str, side : str):
+    print(f"Processing market {market_id} with side {side}")
+
+    for reward in all_rewards:
+        if reward['market_id'] == market_id:
+            print(f"Found market {market_id} in rewards")
+            for num,outcome in enumerate(reward['outcomes']):
+                if side.lower() == outcome.lower():
+                    return reward, reward['tokens_id'][num]
+    return None, None
     
 ## order book
 def get_orderbook_data(token_id):
