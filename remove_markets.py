@@ -24,7 +24,7 @@ for _, row in df.iterrows():
 
         df = df[df['market_id'] != market_id]
         df.to_csv(file_path, index=False)
-        print(f"✅ Removed market_id {market_id} from {file_path}")
+        print(f"✅ Removed {row['question'].lower()} from {file_path}")
 
 
 
