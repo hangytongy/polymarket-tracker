@@ -7,3 +7,4 @@ python-dotenv
 schedule
 py_clob_client
 sentence_transformers
+web3
