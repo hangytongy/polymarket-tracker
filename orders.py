@@ -46,6 +46,21 @@ def place_order(token_id, price, size):
     resp = client.post_order(signed_order, OrderType.GTC)  # Good-Till-Cancelled
     print("Order placed:", resp)
 
+def place_sell_order(token_id, price, size):
+    print(f"Placing SELL order for {token_id} at {price} with size {size}")
+    
+
+    order_args = OrderArgs(
+        token_id  = token_id, # outcome token ID you want to trade
+        price    = price, 
+        size     = size, 
+        side     = SELL
+    )
+
+    signed_order = client.create_order(order_args)
+    resp = client.post_order(signed_order, OrderType.GTC)  # Good-Till-Cancelled
+    print("Order placed:", resp)
+
 
 def cancel_order(order_id):
     order_id = order_id #"0xabcdef..."  # the order ID you want to cancel

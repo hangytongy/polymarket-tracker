@@ -7,6 +7,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from dateutil import parser
 from datetime import datetime, timezone, timedelta
+import os
+import dotenv
+
+dotenv.load_dotenv()
+
 
 def get_polymarket_data():
 
@@ -487,3 +492,39 @@ def get_reward_ob_data(rewards_data,ob):
     }
     
     return data
+
+
+def get_wallet_balance():
+    api_key = os.getenv('MORALIS_API_KEY')
+    wallet = os.getenv('POLY_FUNDER_ADDRESS')
+    usdc = "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"
+
+    url = f"https://deep-index.moralis.io/api/v2.2/{wallet}/erc20?chain=polygon&token_addresses%5B0%5D={usdc}"
+
+    headers = {
+        "Accept": "application/json",
+        "X-API-Key": api_key
+    }
+
+    response = requests.get(url, headers = headers)
+
+    if response.status_code == 200:
+        responses = response.json()
+        if responses:
+            for data in responses:
+                if data['symbol'] == 'USDC':
+                    bal = int(data['balance'])
+                    decimal = int(data['decimals'])
+                    value = bal / decimal
+                    return value
+                
+            return None
+
+        else:
+            print("unable to find USDC")
+            return None
+
+    else:
+        print("error getting USDC balance")
+        return None
+

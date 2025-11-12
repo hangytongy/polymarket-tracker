@@ -1,7 +1,8 @@
-from utils import get_all_rewards, get_wanted_rewards_market, get_orderbook_data, get_reward_ob_data
+from utils import get_all_rewards, get_wanted_rewards_market, get_orderbook_data, get_reward_ob_data, get_wallet_balance
 from orders import get_current_orders, place_order, cancel_order, get_all_orders_id, cancel_all_orders
 import pandas as pd
 from send_telegram_message import send_telegram_message
+import math
 
 def round_down(value, decimals):
     factor = 10 ** decimals
@@ -23,6 +24,14 @@ try:
 
     if missing_cols:
         raise ValueError(f"❌ Missing required columns: {missing_cols}")
+    
+    #get wallet balance
+    wallet_balance = get_wallet_balance()
+
+    if not wallet_balance:
+        message = "error getting USDC balance"
+        send_telegram_message(message)
+        raise ValueError(f"❌ error getting USDC balance")
 
     # === STEP 3: Continue with your logic ===
 
@@ -75,6 +84,12 @@ try:
                         print(f'Current order is not in the reward bid range')
                         order_id = order['id']
                         cancel_order(order_id)
+
+                        if wallet_balance < size:
+                            messge = f"not enough $ for {question}"
+                            send_telegram_message(message)
+                            continue
+
                         bid_price = reward_mid_range
                         place_order(token_id,bid_price,size)
                         print(f"placed order at {bid_price} for {question} and {side}")
@@ -84,6 +99,12 @@ try:
 
             else:
                 print(f'No current order in this market')
+
+                if wallet_balance < size:
+                    messge = f"not enough $ for {question}"
+                    send_telegram_message(message)
+                    continue
+
                 bid_price = reward_mid_range
                 place_order(token_id,bid_price,size)
                 print(f"placed order at {bid_price} for {question} and {side}")
