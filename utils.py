@@ -413,6 +413,7 @@ def get_all_rewards():
         
         return all_rewards
     else:
+        print(f"{response.status_code}")
         return None
 
 def get_wanted_rewards_market(all_rewards,market_id : str, side : str):

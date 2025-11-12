@@ -54,6 +54,10 @@ if response.status_code == 200:
 
                     place_sell_order(asset,price_,size_)
 
+
+    else:
+        print("no positions found")
+
 else:
     message = "unable to ping exisiting positions"
     send_telegram_message(message)

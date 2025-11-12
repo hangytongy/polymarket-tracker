@@ -16,10 +16,10 @@ try:
     # === STEP 1: Load CSV ===
     file_path = "markets.csv"   # Change to your actual CSV file path
 
-    df = pd.read_csv(file_path, usecols=['market_id', 'side'], dtype={'market_id': str, 'side': str})
+    df = pd.read_csv(file_path, usecols=['question','market_id', 'side'], dtype={'question' : str,'market_id': str, 'side': str})
 
     # === STEP 2: Validate columns ===
-    required_cols = {'market_id', 'side'}
+    required_cols = {'question','market_id', 'side'}
     missing_cols = required_cols - set(df.columns)
 
     if missing_cols:
