@@ -3,7 +3,7 @@
       {
         "name": "polymarkets_rewards",
         "script": "venv/bin/python3",
-        "cron_restart": "*/2 * * * *",
+        "cron_restart": "*/1 * * * *",
         "autorestart" : false,
         "time": true,
         "args" : "rewards.py",

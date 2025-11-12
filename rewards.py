@@ -3,7 +3,11 @@ from orders import get_current_orders, place_order, cancel_order, get_all_orders
 import pandas as pd
 from send_telegram_message import send_telegram_message
 
-buy_in_size = 10
+def round_down(value, decimals):
+    factor = 10 ** decimals
+    return math.floor(value * factor) / factor
+
+buy_in_size = 50
 
 try:
     all_rewards = get_all_rewards()
@@ -49,7 +53,8 @@ try:
             reward_bid_min = min(reward_bid)
             reward_bid_max = max(reward_bid)
             decimal_places = len(str(reward_bid_max).split(".")[1]) if "." in str(reward_bid_max) else 0
-            reward_mid_range = (reward_bid_max + reward_bid_min) / 2
+            #reward_mid_range = (reward_bid_max + reward_bid_min) / 2
+            reward_mid_range = reward_bid_min + 0.33 * (reward_bid_max - reward_bid_min)
             reward_mid_range = round(reward_mid_range,decimal_places)
             mid_range_lower = round((reward_mid_range + reward_bid_min) / 2,decimal_places)
             mid_range_upper = round((reward_mid_range + reward_bid_max) / 2,decimal_places)
@@ -63,7 +68,8 @@ try:
             if current_orders:
                 #check if the current order is in the reward bid range
                 for order in current_orders:
-                    if float(order['price']) >= mid_range_lower and float(order['price']) <= mid_range_upper:
+                    if float(order['price']) >= reward_bid_min and float(order['price']) <= reward_mid_range:
+                    #if float(order['price']) >= mid_range_lower and float(order['price']) <= mid_range_upper:
                         print(f'Current order is in the reward bid range')
                     else:
                         print(f'Current order is not in the reward bid range')
