@@ -9,6 +9,8 @@ from dateutil import parser
 from datetime import datetime, timezone, timedelta
 import os
 import dotenv
+import time
+from web3 import Web3
 
 dotenv.load_dotenv()
 
@@ -494,8 +496,28 @@ def get_reward_ob_data(rewards_data,ob):
     
     return data
 
-
 def get_wallet_balance():
+    USDC_CONTRACT = "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"
+    address = os.getenv('POLY_FUNDER_ADDRESS')
+    RPC = "https://polygon-rpc.com"
+    w3 = Web3(Web3.HTTPProvider(RPC))
+    erc20_abi = [{"constant":True,"inputs":[{"name":"_owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"balance","type":"uint256"}],"type":"function"},
+             {"constant":True,"inputs":[],"name":"decimals","outputs":[{"name":"","type":"uint8"}],"type":"function"}]
+    contract = w3.eth.contract(address=Web3.to_checksum_address(USDC_CONTRACT), abi=erc20_abi)
+
+    try:
+        raw = contract.functions.balanceOf(Web3.to_checksum_address(address)).call()
+        usdc = raw / 1e6
+        return usdc
+    except Exception as e:
+        print(f"Error query balance: {e}")
+        return None
+
+
+
+
+
+def get_wallet_balance_moralis():
     api_key = os.getenv('MORALIS_API_KEY')
     wallet = os.getenv('POLY_FUNDER_ADDRESS')
     usdc = "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"
