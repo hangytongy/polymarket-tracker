@@ -106,24 +106,26 @@ try:
             if current_orders:
                 #check if the current order is in the reward bid range
                 for order in current_orders:
-                    if float(order['price']) >= reward_bid_min and float(order['price']) <= reward_mid_range:
-                    #if float(order['price']) >= mid_range_lower and float(order['price']) <= mid_range_upper:
-                        print(f'Current order is in the reward bid range')
-                    else:
-                        print(f'Current order is not in the reward bid range')
-                        order_id = order['id']
-                        cancel_order(order_id)
+                    #check for only buy orders
+                    if order['side'] == 'BUY':
+                        if float(order['price']) >= reward_bid_min and float(order['price']) <= reward_mid_range:
+                        #if float(order['price']) >= mid_range_lower and float(order['price']) <= mid_range_upper:
+                            print(f'Current order is in the reward bid range')
+                        else:
+                            print(f'Current order is not in the reward bid range')
+                            order_id = order['id']
+                            cancel_order(order_id)
 
-                        if wallet_balance < size:
-                            message = f"not enough $ for {question}"
+                            if wallet_balance < size:
+                                message = f"not enough $ for {question}"
+                                send_telegram_message(message)
+                                continue
+
+                            bid_price = reward_mid_range
+                            place_order(token_id,bid_price,size)
+                            print(f"placed order at {bid_price} for {question} and {side}")
+                            message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {question} and {side} and size {size}"
                             send_telegram_message(message)
-                            continue
-
-                        bid_price = reward_mid_range
-                        place_order(token_id,bid_price,size)
-                        print(f"placed order at {bid_price} for {question} and {side}")
-                        message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {question} and {side} and size {size}"
-                        send_telegram_message(message)
 
 
             else:
