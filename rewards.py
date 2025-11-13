@@ -8,7 +8,9 @@ def round_down(value, decimals):
     factor = 10 ** decimals
     return math.floor(value * factor) / factor
 
-buy_in_size = 50
+buy_in_size = 50 #not used anymore
+size_agression = 0.01 #% of total bid rewards liquidity
+agression = 0.4 # 0.1-0.9
 
 try:
     all_rewards = get_all_rewards()
@@ -70,7 +72,7 @@ try:
             reward_bid_max = max(reward_bid)
             decimal_places = len(str(tick).split(".")[1]) if "." in str(tick) else 0
             #reward_mid_range = (reward_bid_max + reward_bid_min) / 2
-            reward_mid_range = reward_bid_min + 0.33 * (reward_bid_max - reward_bid_min)
+            reward_mid_range = reward_bid_min + agression * (reward_bid_max - reward_bid_min)
             reward_mid_range = round_down(reward_mid_range,decimal_places)
             mid_range_lower = round((reward_mid_range + reward_bid_min) / 2,decimal_places)
             mid_range_upper = round((reward_mid_range + reward_bid_max) / 2,decimal_places)
@@ -82,7 +84,7 @@ try:
             reward_bid = reward_ob_data['bids']
             reward_bid_size = [bid['size'] for bid in reward_bid]
             total_reward_bid_size = sum(reward_bid_size)
-            size_desired = total_reward_bid_size *0.01 #1% of total reward bids
+            size_desired = total_reward_bid_size *size_agression #1% of total reward bids
 
             size = max(size_desired, min_size)
 
