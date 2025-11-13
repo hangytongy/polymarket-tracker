@@ -9,6 +9,8 @@ def round_down(value, decimals):
     return math.floor(value * factor) / factor
 
 buy_in_size = 50 #not used anymore
+my_min_size = 100
+my_max_size = 800
 size_agression = 0.01 #% of total bid rewards liquidity
 agression = 0.4 # 0.1-0.9
 
@@ -84,7 +86,7 @@ try:
             reward_bid = reward_ob_data['bids']
             reward_bid_size = [bid['size'] for bid in reward_bid]
             total_reward_bid_size = sum(reward_bid_size)
-            size_desired = total_reward_bid_size *size_agression #1% of total reward bids
+            size_desired = total_reward_bid_size *size_agression #% of total reward bids
 
             size = max(size_desired, min_size)
 
@@ -100,6 +102,8 @@ try:
                 size = max(size, min_size)
 
                 size = round(size,1)
+            
+            size = max(size,my_min_size)
 
             #get current orders by token_id
             current_orders = get_current_orders(token_id)
