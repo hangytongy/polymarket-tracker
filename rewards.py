@@ -1,4 +1,4 @@
-from utils import get_all_rewards, get_wanted_rewards_market, get_orderbook_data, get_reward_ob_data, get_wallet_balance
+from utils import get_all_rewards, get_wanted_rewards_market, get_orderbook_data, get_reward_ob_data, get_wallet_balance, async_get_rewards, get_market_liquidity_volume_tick
 from orders import get_current_orders, place_order, cancel_order, get_all_orders_id, cancel_all_orders
 import pandas as pd
 from send_telegram_message import send_telegram_message
@@ -12,6 +12,8 @@ buy_in_size = 50
 
 try:
     all_rewards = get_all_rewards()
+
+    #all_rewards = asyncio.run(async_get_rewards())
 
     # === STEP 1: Load CSV ===
     file_path = "markets.csv"   # Change to your actual CSV file path
@@ -51,24 +53,51 @@ try:
             #get minimum order size
             min_size = int(reward_data['reward_min_size'])
 
-            if buy_in_size < min_size:
-                size = min_size
+            #get volume, liquidit and tick
+            liquidity, volume, tick = get_market_liquidity_volume_tick(market_id)
+            if tick:
+                pass
+
             else:
-                size = buy_in_size
+                message = f"unable to get liquidity volume and tick from {question}"
+                send_telegram_message(message)
+                continue
 
             #get reward bid range
             reward_bid = reward_ob_data['bids']
             reward_bid = [bid['price'] for bid in reward_bid]
             reward_bid_min = min(reward_bid)
             reward_bid_max = max(reward_bid)
-            decimal_places = len(str(reward_bid_max).split(".")[1]) if "." in str(reward_bid_max) else 0
+            decimal_places = len(str(tick).split(".")[1]) if "." in str(tick) else 0
             #reward_mid_range = (reward_bid_max + reward_bid_min) / 2
             reward_mid_range = reward_bid_min + 0.33 * (reward_bid_max - reward_bid_min)
-            reward_mid_range = round(reward_mid_range,decimal_places)
+            reward_mid_range = round_down(reward_mid_range,decimal_places)
             mid_range_lower = round((reward_mid_range + reward_bid_min) / 2,decimal_places)
             mid_range_upper = round((reward_mid_range + reward_bid_max) / 2,decimal_places)
 
             print(f"Mid range: {reward_mid_range}, Mid range lower: {mid_range_lower}, Mid range upper: {mid_range_upper}")
+
+            
+            #decide size
+            reward_bid = reward_ob_data['bids']
+            reward_bid_size = [bid['size'] for bid in reward_bid]
+            total_reward_bid_size = sum(reward_bid_size)
+            size_desired = total_reward_bid_size *0.01 #1% of total reward bids
+
+            size = max(size_desired, min_size)
+
+            if size == min_size:
+                size = size
+            
+            else:
+
+                if size > wallet_balance:
+                    while size > wallet_balance:
+                        size *=0.8
+
+                size = max(size, min_size)
+
+                size = round(size,1)
 
             #get current orders by token_id
             current_orders = get_current_orders(token_id)
@@ -86,7 +115,7 @@ try:
                         cancel_order(order_id)
 
                         if wallet_balance < size:
-                            messge = f"not enough $ for {question}"
+                            message = f"not enough $ for {question}"
                             send_telegram_message(message)
                             continue
 
@@ -101,7 +130,7 @@ try:
                 print(f'No current order in this market')
 
                 if wallet_balance < size:
-                    messge = f"not enough $ for {question}"
+                    message = f"not enough $ for {question}"
                     send_telegram_message(message)
                     continue
 
@@ -125,6 +154,7 @@ try:
             df.to_csv(file_path, index=False)
             print(f"✅ Removed market_id {market_id} from {file_path}")
             message = f"No reward found for {market_id} and {side} remove from orders"
+            send_telegram_message(message)
 
 
 

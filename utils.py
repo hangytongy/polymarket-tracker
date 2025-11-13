@@ -418,6 +418,60 @@ def get_all_rewards():
         print(f"{response.status_code}")
         return None
 
+async def fetch_rewards(session, slug):
+    url_rewards = (
+        f"https://polymarket.com/api/rewards/markets"
+        f"?orderBy=rate_per_day&position=DESC&query=&showFavorites=false"
+        f"&tagSlug={slug}&onlyMergeable=false&noCompetition=false"
+        f"&onlyOpenOrders=false&onlyPositions=false"
+    )
+    polymarket_url = "https://polymarket.com/event/"
+
+    async with session.get(url_rewards) as response:
+        if response.status != 200:
+            print(f"⚠️ Failed to fetch {slug}: {response.status}")
+            return []
+
+        data = (await response.json()).get("data", [])
+        results = []
+
+        for item in data:
+            reward = {
+                "market_id": item.get("market_id"),
+                "link": f"{polymarket_url}{item.get('event_slug')}/{item.get('market_slug')}",
+                "condition_id": item.get("condition_id"),
+                "question": item.get("question"),
+                "volume_24hr": item.get("volume_24hr"),
+                "tokens_id": [t["token_id"] for t in item.get("tokens", [])],
+                "outcomes": [t["outcome"] for t in item.get("tokens", [])],
+                "reward_start": [cfg["start_date"] for cfg in item.get("rewards_config", [])],
+                "reward_end": [cfg["end_date"] for cfg in item.get("rewards_config", [])],
+                "reward_amt": [cfg["rate_per_day"] for cfg in item.get("rewards_config", [])],
+                "reward_spread": item.get("rewards_max_spread"),
+                "reward_min_size": item.get("rewards_min_size"),
+                "competitiveness": item.get("market_competitiveness"),
+            }
+            results.append(reward)
+
+        return results
+
+
+async def async_get_rewards():
+    slugs = ['politics', 'crypto', 'sports', 'business', 'science', 'middle-east']
+    all_rewards = []
+
+    async with aiohttp.ClientSession() as session:
+        tasks = [fetch_rewards(session, slug) for slug in slugs]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        for r in results:
+            if isinstance(r, list):
+                all_rewards.extend(r)
+
+    return all_rewards
+
+
+
 def get_wanted_rewards_market(all_rewards,market_id : str, side : str):
     print(f"Processing market {market_id} with side {side}")
 
@@ -550,4 +604,22 @@ def get_wallet_balance_moralis():
     else:
         print("error getting USDC balance")
         return None
+
+def get_market_liquidity_volume_tick(market_id):
+    url = f"https://gamma-api.polymarket.com/markets/{market_id}"
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        liquidity = data['liquidityNum']
+        volume = data['volumeNum']
+        tick = data['orderPriceMinTickSize']
+
+        print(f"liqudity: {liquidity}, volume: {volume}, tick size : {tick}")
+        return liquidity, volume, tick
+
+    else:
+        print("error getting market data")
+        return None, None , None
 

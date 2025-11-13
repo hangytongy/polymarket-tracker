@@ -53,6 +53,8 @@ if response.status_code == 200:
                     size_ = order['size']
 
                     place_sell_order(asset,price_,size_)
+                message = f"SELL ORDER for {question} at size {total_size}"
+                send_telegram_message(message)
 
 
     else:
