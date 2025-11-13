@@ -32,9 +32,6 @@ for _, row in df.iterrows():
 
     if remove_question.lower() == row['question'].lower():
 
-        reward_data, token_id = get_wanted_rewards_market(all_rewards,market_id,side)
-
-        #how to get token_id from market_id????
         token_ids = get_token_id(market_id)
 
         if token_ids:
@@ -55,7 +52,7 @@ for _, row in df.iterrows():
         else:
             print("unable to find market to remove")
             message = "unable to find market to remove"
-            send_telegram_message(message)
+            send_telegram_message(message)        
 
 
 
