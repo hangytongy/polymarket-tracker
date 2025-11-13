@@ -1,11 +1,16 @@
 import csv
 from sentence_transformers import SentenceTransformer, util
 from utils import get_all_rewards
+import sys
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
-question = input("Input the polymarket full question : ")
-outcome = input("Input the desired outcome : ")
+try:
+    question = sys.argv[1]
+    outcome = sys.argv[2]
+except:
+    question = input("Input the polymarket full question : ")
+    outcome = input("Input the desired outcome : ")
 
 all_rewards = get_all_rewards()
 
@@ -44,15 +49,12 @@ for reward in all_rewards:
     ):
         market_id = reward['market_id']
         print(f"market id = {market_id }")
-        
-        insert_into_file = input("do you want to put the above into file? (Y/N)")
-        
-        if insert_into_file.lower() == "y":
-            new_row = [question.lower(),market_id,outcome]
-            with open("markets.csv", "a", newline="") as f:
-                writer = csv.writer(f)
-                writer.writerow(new_row)
-            print(f"new row added for market{market_id} with outcome {outcome}")
+                
+        new_row = [question.lower(),market_id,outcome]
+        with open("markets.csv", "a", newline="") as f:
+            writer = csv.writer(f)
+            writer.writerow(new_row)
+        print(f"new row added for market{market_id} with outcome {outcome}")
             
 try: 
     print(market_id)

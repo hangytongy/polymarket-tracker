@@ -1,10 +1,10 @@
 
 import pandas as pd
 import json
-remove_question = input("Input the polymarket full question u want to remove : ")
 from orders import *
 from utils import *
 from send_telegram_message import send_telegram_message
+import sys
 
 def get_token_id(market_id):
     url = f"https://gamma-api.polymarket.com/markets/{market_id}"
@@ -19,6 +19,12 @@ def get_token_id(market_id):
     
     else:
         return None
+
+try:
+    remove_question = sys.argv[1]
+
+except:
+    remove_question = input("Input the polymarket full question u want to remove : ")
 
 
 # === STEP 1: Load CSV ===
