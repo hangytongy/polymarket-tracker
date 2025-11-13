@@ -54,7 +54,7 @@ for reward in all_rewards:
         with open("markets.csv", "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(new_row)
-        print(f"new row added for market{market_id} with outcome {outcome}")
+        print(f"new row added for market {question} with outcome {outcome}")
             
 try: 
     print(market_id)
