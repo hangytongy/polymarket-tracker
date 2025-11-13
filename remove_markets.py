@@ -1,5 +1,6 @@
 
 import pandas as pd
+import json
 remove_question = input("Input the polymarket full question u want to remove : ")
 from orders import *
 from utils import *
@@ -33,6 +34,7 @@ for _, row in df.iterrows():
     if remove_question.lower() == row['question'].lower():
 
         token_ids = get_token_id(market_id)
+        token_ids = json.loads(token_ids)
 
         if token_ids:
             for token_id in token_ids:
