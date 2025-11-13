@@ -6,8 +6,8 @@ import sys
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 try:
-    question = sys.argv[1]
-    outcome = sys.argv[2]
+    question = " ".join(sys.argv[1:-1])
+    outcome = sys.argv[-1]
 except:
     question = input("Input the polymarket full question : ")
     outcome = input("Input the desired outcome : ")

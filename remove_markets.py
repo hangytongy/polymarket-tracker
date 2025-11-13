@@ -21,7 +21,7 @@ def get_token_id(market_id):
         return None
 
 try:
-    remove_question = sys.argv[1]
+    remove_question = " ".join(sys.argv[1:])
 
 except:
     remove_question = input("Input the polymarket full question u want to remove : ")

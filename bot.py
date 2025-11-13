@@ -15,8 +15,8 @@ async def add_market(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Usage: /add <question> <side>")
         return
     
-    question = context.args[0]
-    side = context.args[1]
+    question = " ".join(context.args[:-1])
+    side = context.args[-1]
     try:
         result = subprocess.run(
             ["python3", "add_markets.py", question, side],
@@ -33,7 +33,7 @@ async def remove_market(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Usage: /remove <question>")
         return
     
-    question = context.args[0]
+    question = " ".join(context.args[:])
     try:
         result = subprocess.run(
             ["python3", "remove_markets.py", question],
