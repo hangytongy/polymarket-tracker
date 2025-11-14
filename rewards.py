@@ -11,6 +11,7 @@ def round_down(value, decimals):
 buy_in_size = 50 #not used anymore
 my_min_size = 100
 my_max_size = 800
+my_min_amt = 100
 size_agression = 0.01 #% of total bid rewards liquidity
 agression = 0.4 # 0.1-0.9
 
@@ -105,6 +106,12 @@ try:
             
             size = max(size,my_min_size)
 
+            amt = size * reward_mid_range
+            if amt < my_min_amt:
+                size = round(my_min_amt / reward_mid_range,1)
+            else:
+                size = size
+
             #get current orders by token_id
             current_orders = get_current_orders(token_id)
 
@@ -122,7 +129,7 @@ try:
                             order_id = order['id']
                             cancel_order(order_id)
 
-                            if wallet_balance < size:
+                            if wallet_balance < size * reward_mid_range :
                                 message = f"not enough $ for {question}"
                                 send_telegram_message(message)
                                 continue
@@ -137,7 +144,7 @@ try:
             else:
                 print(f'No current order in this market')
 
-                if wallet_balance < size:
+                if wallet_balance < size * reward_mid_range:
                     message = f"not enough $ for {question}"
                     send_telegram_message(message)
                     continue
