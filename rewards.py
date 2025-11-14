@@ -12,8 +12,8 @@ buy_in_size = 50 #not used anymore
 my_min_size = 100
 my_max_size = 800
 my_min_amt = 100
-size_agression = 0.01 #% of total bid rewards liquidity
-agression = 0.4 # 0.1-0.9
+size_agression = 0.02 #% of total bid rewards liquidity
+agression = 0.5 # 0.1-0.9
 
 try:
     all_rewards = get_all_rewards()
@@ -158,24 +158,28 @@ try:
 
         else:
             print(f'No reward found for {market_id} and {side}')
+            message = f"No reward found for {market_id} {row['question']} and {side}"
+            send_telegram_message(message)
 
-            token_ids = get_token_id(market_id)
+            token_ids_ = get_token_id(market_id)
 
-            if token_ids:
-                for token_id in token_ids:
+            if token_ids_:
+                for token_id in token_ids_:
 
-                    filtered_orders = get_current_orders(token_id)
-                    if filtered_orders:
-                        for order in filtered_orders:   
+                    orders = get_current_orders(token_id)
+                    if orders:
+                        message = f"current orders : {orders}"
+                        for order in orders:   
                             if order['side'] =="BUY":
                                 order_id = order['id']
                                 cancel_order(order_id)
+                                message = f"Order canceled for {market_id} {token_id} and {side}"
 
                 df = df[df['market_id'] != market_id]
                 df.to_csv(file_path, index=False)
                 print(f"✅ Removed market_id {market_id} from {file_path}")
-                message = f"No reward found for {market_id} and {side} remove from orders"
-                send_telegram_message(message)
+                
+                
             else:
                 print("unable to find market to remove")
                 message = "unable to find market to remove"
