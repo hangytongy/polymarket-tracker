@@ -162,6 +162,8 @@ try:
             send_telegram_message(message)
 
             token_ids_ = get_token_id(market_id)
+            message = f"token_ids = {token_ids_}"
+            send_telegram_message(message)
 
             if token_ids_:
                 for token_id in token_ids_:
@@ -169,6 +171,7 @@ try:
                     orders = get_current_orders(token_id)
                     if orders:
                         message = f"current orders : {orders}"
+                        send_telegram_message(message)
                         for order in orders:   
                             if order['side'] =="BUY":
                                 order_id = order['id']
