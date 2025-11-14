@@ -623,3 +623,16 @@ def get_market_liquidity_volume_tick(market_id):
         print("error getting market data")
         return None, None , None
 
+def get_token_id(market_id):
+    url = f"https://gamma-api.polymarket.com/markets/{market_id}"
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        token_ids = data['clobTokenIds']
+
+        return token_ids
+    
+    else:
+        return None

@@ -1,4 +1,4 @@
-from utils import get_all_rewards, get_wanted_rewards_market, get_orderbook_data, get_reward_ob_data, get_wallet_balance, async_get_rewards, get_market_liquidity_volume_tick
+from utils import get_all_rewards, get_wanted_rewards_market, get_orderbook_data, get_reward_ob_data, get_wallet_balance, async_get_rewards, get_market_liquidity_volume_tick, get_token_id
 from orders import get_current_orders, place_order, cancel_order, get_all_orders_id, cancel_all_orders
 import pandas as pd
 from send_telegram_message import send_telegram_message
@@ -158,18 +158,26 @@ try:
 
         else:
             print(f'No reward found for {market_id} and {side}')
-            filtered_orders = get_current_orders(market_id)
 
-            if filtered_orders:
-                
-                all_order_ids = get_all_orders_id(filtered_orders)
-                cancel_all_orders(all_order_ids)
+            token_ids = get_token_id(market_id)
 
-            df = df[df['market_id'] != market_id]
-            df.to_csv(file_path, index=False)
-            print(f"✅ Removed market_id {market_id} from {file_path}")
-            message = f"No reward found for {market_id} and {side} remove from orders"
-            send_telegram_message(message)
+            if token_ids:
+                for token_id in token_ids:
+
+                    filtered_orders = get_current_orders(market_id)
+                    if filtered_orders:
+                        all_order_ids = get_all_orders_id(filtered_orders)
+                        cancel_all_orders(all_order_ids)
+
+                df = df[df['market_id'] != market_id]
+                df.to_csv(file_path, index=False)
+                print(f"✅ Removed market_id {market_id} from {file_path}")
+                message = f"No reward found for {market_id} and {side} remove from orders"
+                send_telegram_message(message)
+            else:
+                print("unable to find market to remove")
+                message = "unable to find market to remove"
+                send_telegram_message(message)   
 
 
 

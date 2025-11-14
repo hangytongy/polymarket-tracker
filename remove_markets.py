@@ -6,20 +6,6 @@ from utils import *
 from send_telegram_message import send_telegram_message
 import sys
 
-def get_token_id(market_id):
-    url = f"https://gamma-api.polymarket.com/markets/{market_id}"
-
-    response = requests.get(url)
-
-    if response.status_code == 200:
-        data = response.json()
-        token_ids = data['clobTokenIds']
-
-        return token_ids
-    
-    else:
-        return None
-
 try:
     remove_question = " ".join(sys.argv[1:])
 
