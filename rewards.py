@@ -166,8 +166,10 @@ try:
 
                     filtered_orders = get_current_orders(market_id)
                     if filtered_orders:
-                        all_order_ids = get_all_orders_id(filtered_orders)
-                        cancel_all_orders(all_order_ids)
+                        for order in filtered_orders:
+                            if order['side'] =="BUY":
+                                order_id = order['id']
+                                cancel_order(order_id)
 
                 df = df[df['market_id'] != market_id]
                 df.to_csv(file_path, index=False)
