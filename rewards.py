@@ -161,12 +161,10 @@ try:
             message = f"No reward found for {market_id} {row['question']} and {side}"
             send_telegram_message(message)
 
-            token_ids_ = get_token_id(market_id)
-            message = f"token_ids = {token_ids_}"
-            send_telegram_message(message)
+            token_ids = get_token_id(market_id)
 
-            if token_ids_:
-                for token_id in token_ids_:
+            if token_ids:
+                for token_id in token_ids:
 
                     orders = get_current_orders(token_id)
                     if orders:

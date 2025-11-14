@@ -26,7 +26,6 @@ for _, row in df.iterrows():
     if remove_question.lower() == row['question'].lower():
 
         token_ids = get_token_id(market_id)
-        token_ids = json.loads(token_ids)
 
         if token_ids:
             for token_id in token_ids:

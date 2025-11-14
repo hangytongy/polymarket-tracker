@@ -631,6 +631,7 @@ def get_token_id(market_id):
     if response.status_code == 200:
         data = response.json()
         token_ids = data['clobTokenIds']
+        token_ids = json.loads(token_ids)
 
         return token_ids
     
