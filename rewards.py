@@ -168,13 +168,11 @@ try:
 
                     orders = get_current_orders(token_id)
                     if orders:
-                        message = f"current orders : {orders}"
-                        send_telegram_message(message)
                         for order in orders:   
                             if order['side'] =="BUY":
                                 order_id = order['id']
                                 cancel_order(order_id)
-                                message = f"Order canceled for {market_id} {token_id} and {side}"
+                        message = f"Order canceled for {market_id} {token_id} and {side}"
 
                 df = df[df['market_id'] != market_id]
                 df.to_csv(file_path, index=False)
