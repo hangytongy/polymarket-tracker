@@ -164,9 +164,9 @@ try:
             if token_ids:
                 for token_id in token_ids:
 
-                    filtered_orders = get_current_orders(market_id)
+                    filtered_orders = get_current_orders(token_id)
                     if filtered_orders:
-                        for order in filtered_orders:
+                        for order in filtered_orders:   
                             if order['side'] =="BUY":
                                 order_id = order['id']
                                 cancel_order(order_id)
