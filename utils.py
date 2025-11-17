@@ -508,8 +508,11 @@ def get_orderbook_data(token_id):
             bids = response.json()[0]['bids']
             asks = response.json()[0]['asks']
             tick_size = response.json()[0]['tick_size']
-            mid_price = mid_price = (float(response.json()[0]['bids'][-1]['price']) + float(response.json()[0]['asks'][-1]['price']))/2
-
+            try:
+                mid_price = mid_price = (float(response.json()[0]['bids'][-1]['price']) + float(response.json()[0]['asks'][-1]['price']))/2
+            except:
+                print("no mid price found")
+                mid_price = None
             data = {
                 "market_contract" : market_contract,
                 "time" : time,
@@ -637,3 +640,20 @@ def get_token_id(market_id):
     
     else:
         return None
+    
+def get_exisiting_positions():
+    assets = []
+    FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
+
+    positions_url = f"https://data-api.polymarket.com/positions?user={FUNDER}"
+
+    response = requests.get(positions_url)
+
+    if response.status_code == 200:
+
+        positions = response.json()
+        if positions:
+            for position in positions:
+                asset = position['asset']
+                assets.append(asset)
+    return assets

@@ -1,4 +1,4 @@
-from utils import get_all_rewards, get_wanted_rewards_market, get_orderbook_data, get_reward_ob_data, get_wallet_balance, async_get_rewards, get_market_liquidity_volume_tick, get_token_id
+from utils import *
 from orders import get_current_orders, place_order, cancel_order, get_all_orders_id, cancel_all_orders
 import pandas as pd
 from send_telegram_message import send_telegram_message
@@ -14,6 +14,7 @@ my_max_size = 800
 my_min_amt = 100
 size_agression = 0.02 #% of total bid rewards liquidity
 agression = 0.5 # 0.1-0.9
+set_buy_if_got_existingPos = False
 
 try:
     all_rewards = get_all_rewards()
@@ -47,144 +48,165 @@ try:
         side = str(row['side'])
         print(f"-----{market_id}----")
 
-        reward_data, token_id = get_wanted_rewards_market(all_rewards,market_id,side)
+        try:
 
-        if token_id:
-            question = reward_data['question']
-            #get market orderbook
-            ob_data = get_orderbook_data(token_id)
-            #get reward bid and ask spread
-            reward_ob_data = get_reward_ob_data(reward_data,ob_data)
-            #get minimum order size
-            min_size = int(reward_data['reward_min_size'])
+            reward_data, token_id = get_wanted_rewards_market(all_rewards,market_id,side)
 
-            #get volume, liquidit and tick
-            liquidity, volume, tick = get_market_liquidity_volume_tick(market_id)
-            if tick:
-                pass
+            if token_id:
 
-            else:
-                message = f"unable to get liquidity volume and tick from {question}"
-                send_telegram_message(message)
-                continue
+                #check for current pos and if have, skip if set_no_buy_if_got_existingPos = True
+                assets = get_exisiting_positions()
+                #if there is a current position
+                if token_id in assets:
+                    #if you want to buy with current existing pos
+                    if set_buy_if_got_existingPos:
+                        pass
+                    else:
+                        continue
 
-            #get reward bid range
-            reward_bid = reward_ob_data['bids']
-            reward_bid = [bid['price'] for bid in reward_bid]
-            reward_bid_min = min(reward_bid)
-            reward_bid_max = max(reward_bid)
-            decimal_places = len(str(tick).split(".")[1]) if "." in str(tick) else 0
-            #reward_mid_range = (reward_bid_max + reward_bid_min) / 2
-            reward_mid_range = reward_bid_min + agression * (reward_bid_max - reward_bid_min)
-            reward_mid_range = round_down(reward_mid_range,decimal_places)
-            mid_range_lower = round((reward_mid_range + reward_bid_min) / 2,decimal_places)
-            mid_range_upper = round((reward_mid_range + reward_bid_max) / 2,decimal_places)
+                question = reward_data['question']
+                #get market orderbook
+                ob_data = get_orderbook_data(token_id)
 
-            print(f"Mid range: {reward_mid_range}, Mid range lower: {mid_range_lower}, Mid range upper: {mid_range_upper}")
-
-            
-            #decide size
-            reward_bid = reward_ob_data['bids']
-            reward_bid_size = [bid['size'] for bid in reward_bid]
-            total_reward_bid_size = sum(reward_bid_size)
-            size_desired = total_reward_bid_size *size_agression #% of total reward bids
-
-            size = max(size_desired, min_size)
-
-            if size == min_size:
-                size = size
-            
-            else:
-
-                if size > wallet_balance:
-                    while size > wallet_balance:
-                        size *=0.8
-
-                size = max(size, min_size)
-
-                size = round(size,1)
-            
-            size = max(size,my_min_size)
-
-            amt = size * reward_mid_range
-            if amt < my_min_amt:
-                size = round(my_min_amt / reward_mid_range,1)
-            else:
-                size = size
-
-            #get current orders by token_id
-            current_orders = get_current_orders(token_id)
-
-            #check if there is a current order in this market
-            if current_orders:
-                #check if the current order is in the reward bid range
-                for order in current_orders:
-                    #check for only buy orders
-                    if order['side'] == 'BUY':
-                        if float(order['price']) >= reward_bid_min and float(order['price']) <= reward_mid_range:
-                        #if float(order['price']) >= mid_range_lower and float(order['price']) <= mid_range_upper:
-                            print(f'Current order is in the reward bid range')
-                        else:
-                            print(f'Current order is not in the reward bid range')
-                            order_id = order['id']
-                            cancel_order(order_id)
-
-                            if wallet_balance < size * reward_mid_range :
-                                message = f"not enough $ for {question}"
-                                send_telegram_message(message)
-                                continue
-
-                            bid_price = reward_mid_range
-                            place_order(token_id,bid_price,size)
-                            print(f"placed order at {bid_price} for {question} and {side}")
-                            message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {question} and {side} and size {size}"
-                            send_telegram_message(message)
-
-
-            else:
-                print(f'No current order in this market')
-
-                if wallet_balance < size * reward_mid_range:
-                    message = f"not enough $ for {question}"
+                if not ob_data['mid_price']:
+                    message = f"no mid price found in {question}"
                     send_telegram_message(message)
                     continue
 
-                bid_price = reward_mid_range
-                place_order(token_id,bid_price,size)
-                print(f"placed order at {bid_price} for {question} and {side}")
-                message = f"placed order at {bid_price} for {question} and {side} at size {size}"
-                send_telegram_message(message)
+                #get reward bid and ask spread
+                reward_ob_data = get_reward_ob_data(reward_data,ob_data)
+                #get minimum order size
+                min_size = int(reward_data['reward_min_size'])
 
+                #get volume, liquidit and tick
+                liquidity, volume, tick = get_market_liquidity_volume_tick(market_id)
+                if tick:
+                    pass
 
-        else:
-            print(f'No reward found for {market_id} and {side}')
-            message = f"No reward found for {market_id} {row['question']} and {side}"
-            send_telegram_message(message)
+                else:
+                    message = f"unable to get liquidity volume and tick from {question}"
+                    send_telegram_message(message)
+                    continue
 
-            token_ids = get_token_id(market_id)
+                #get reward bid range
+                reward_bid = reward_ob_data['bids']
+                reward_bid = [bid['price'] for bid in reward_bid]
+                reward_bid_min = min(reward_bid)
+                reward_bid_max = max(reward_bid)
+                decimal_places = len(str(tick).split(".")[1]) if "." in str(tick) else 0
+                #reward_mid_range = (reward_bid_max + reward_bid_min) / 2
+                reward_mid_range = reward_bid_min + agression * (reward_bid_max - reward_bid_min)
+                reward_mid_range = round_down(reward_mid_range,decimal_places)
+                mid_range_lower = round((reward_mid_range + reward_bid_min) / 2,decimal_places)
+                mid_range_upper = round((reward_mid_range + reward_bid_max) / 2,decimal_places)
 
-            if token_ids:
-                for token_id in token_ids:
+                print(f"Mid range: {reward_mid_range}, Mid range lower: {mid_range_lower}, Mid range upper: {mid_range_upper}")
 
-                    orders = get_current_orders(token_id)
-                    if orders:
-                        for order in orders:   
-                            if order['side'] =="BUY":
+                
+                #decide size
+                reward_bid = reward_ob_data['bids']
+                reward_bid_size = [bid['size'] for bid in reward_bid]
+                total_reward_bid_size = sum(reward_bid_size)
+                size_desired = total_reward_bid_size *size_agression #% of total reward bids
+
+                size = max(size_desired, min_size)
+
+                if size == min_size:
+                    size = size
+                
+                else:
+
+                    if size > wallet_balance:
+                        while size > wallet_balance:
+                            size *=0.8
+
+                    size = max(size, min_size)
+
+                    size = round(size,1)
+                
+                size = max(size,my_min_size)
+
+                amt = size * reward_mid_range
+                if amt < my_min_amt:
+                    size = round(my_min_amt / reward_mid_range,1)
+                else:
+                    size = size
+
+                #get current orders by token_id
+                current_orders = get_current_orders(token_id)
+
+                #check if there is a current order in this market
+                if current_orders:
+                    #check if the current order is in the reward bid range
+                    for order in current_orders:
+                        #check for only buy orders
+                        if order['side'] == 'BUY':
+                            if float(order['price']) >= reward_bid_min and float(order['price']) <= reward_mid_range:
+                            #if float(order['price']) >= mid_range_lower and float(order['price']) <= mid_range_upper:
+                                print(f'Current order is in the reward bid range')
+                            else:
+                                print(f'Current order is not in the reward bid range')
                                 order_id = order['id']
                                 cancel_order(order_id)
-                        message = f"Order canceled for {market_id} {token_id} and {side}"
 
-                df = df[df['market_id'] != market_id]
-                df.to_csv(file_path, index=False)
-                print(f"✅ Removed market_id {market_id} from {file_path}")
-                
-                
+                                if wallet_balance < size * reward_mid_range :
+                                    message = f"not enough $ for {question}"
+                                    send_telegram_message(message)
+                                    continue
+
+                                bid_price = reward_mid_range
+                                place_order(token_id,bid_price,size)
+                                print(f"placed order at {bid_price} for {question} and {side}")
+                                message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {question} and {side} and size {size}"
+                                send_telegram_message(message)
+
+
+                else:
+                    print(f'No current order in this market')
+
+                    if wallet_balance < size * reward_mid_range:
+                        message = f"not enough $ for {question}"
+                        send_telegram_message(message)
+                        continue
+
+                    bid_price = reward_mid_range
+                    place_order(token_id,bid_price,size)
+                    print(f"placed order at {bid_price} for {question} and {side}")
+                    message = f"placed order at {bid_price} for {question} and {side} at size {size}"
+                    send_telegram_message(message)
+
+
             else:
-                print("unable to find market to remove")
-                message = "unable to find market to remove"
-                send_telegram_message(message)   
+                print(f'No reward found for {market_id} and {side}')
+                message = f"No reward found for {market_id} {row['question']} and {side}"
+                send_telegram_message(message)
 
+                token_ids = get_token_id(market_id)
 
+                if token_ids:
+                    for token_id in token_ids:
+
+                        orders = get_current_orders(token_id)
+                        if orders:
+                            for order in orders:   
+                                if order['side'] =="BUY":
+                                    order_id = order['id']
+                                    cancel_order(order_id)
+                            message = f"Order canceled for {market_id} {token_id} and {side}"
+
+                    df = df[df['market_id'] != market_id]
+                    df.to_csv(file_path, index=False)
+                    print(f"✅ Removed market_id {market_id} from {file_path}")
+                    
+                    
+                else:
+                    print("unable to find market to remove")
+                    message = "unable to find market to remove"
+                    send_telegram_message(message)   
+
+        except Exception as e:
+            message = f"{market_id} - {str(row['market_id'])} error : {e}"
+            send_telegram_message(message)
 
 except Exception as e:
     message = f"Error: {e}"
