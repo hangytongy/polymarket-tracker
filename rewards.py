@@ -3,6 +3,8 @@ from orders import get_current_orders, place_order, cancel_order, get_all_orders
 import pandas as pd
 from send_telegram_message import send_telegram_message
 import math
+import asyncio
+import aiohttp
 
 def round_down(value, decimals):
     factor = 10 ** decimals
@@ -18,7 +20,6 @@ set_buy_if_got_existingPos = False
 
 try:
     all_rewards = get_all_rewards()
-
     #all_rewards = asyncio.run(async_get_rewards())
 
     # === STEP 1: Load CSV ===
