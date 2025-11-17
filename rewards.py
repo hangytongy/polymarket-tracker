@@ -5,6 +5,9 @@ from send_telegram_message import send_telegram_message
 import math
 import asyncio
 import aiohttp
+import dotenv
+
+dotenv.load_dotenv()
 
 def round_down(value, decimals):
     factor = 10 ** decimals
@@ -14,14 +17,17 @@ buy_in_size = 50 #not used anymore
 my_min_size = 100
 my_max_size = 800
 my_min_amt = 100
-size_agression = 0.02 #% of total bid rewards liquidity
-agression = 0.5 # 0.1-0.9
-set_buy_if_got_existingPos = False
+size_agression = float(os.getenv("SIZE_AGRESSION", "0.02")) #% of total bid rewards liquidity
+agression = float(os.getenv("AGRESSION", "0.5")) # 0.1-0.9
+set_buy_if_got_existingPos = os.getenv("BUY_EXISITNG_POS", "0") == "1"
+use_async = os.getenv("USE_ASYNC", "0") == "1"
 
 try:
     #if use async to run, also need to change in add_markets.py
-    all_rewards = get_all_rewards()
-    #all_rewards = asyncio.run(async_get_rewards())
+    if use_async:
+        all_rewards = asyncio.run(async_get_rewards())
+    else:
+        all_rewards = get_all_rewards()
 
     # === STEP 1: Load CSV ===
     file_path = "markets.csv"   # Change to your actual CSV file path

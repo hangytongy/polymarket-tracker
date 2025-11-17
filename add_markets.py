@@ -4,6 +4,11 @@ from utils import *
 import sys
 import asyncio
 import aiohttp
+import dotenv
+
+dotenv.load_dotenv()
+
+use_async = os.getenv("USE_ASYNC", "0") == "1"
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -14,8 +19,10 @@ except:
     question = input("Input the polymarket full question : ")
     outcome = input("Input the desired outcome : ")
 
-all_rewards = get_all_rewards()
-#all_rewards = asyncio.run(async_get_rewards())
+if use_async:
+    all_rewards = asyncio.run(async_get_rewards())
+else:
+    all_rewards = get_all_rewards()
 
 def recommend_similar_questions(user_input, rewards, top_n=3, threshold=0.3):
     """
