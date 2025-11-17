@@ -2,6 +2,8 @@ import csv
 from sentence_transformers import SentenceTransformer, util
 from utils import get_all_rewards
 import sys
+import asyncio
+import aiohttp
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
@@ -13,6 +15,7 @@ except:
     outcome = input("Input the desired outcome : ")
 
 all_rewards = get_all_rewards()
+#all_rewards = asyncio.run(async_get_rewards())
 
 def recommend_similar_questions(user_input, rewards, top_n=3, threshold=0.3):
     """
