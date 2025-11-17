@@ -19,6 +19,7 @@ agression = 0.5 # 0.1-0.9
 set_buy_if_got_existingPos = False
 
 try:
+    #if use async to run, also need to change in add_markets.py
     all_rewards = get_all_rewards()
     #all_rewards = asyncio.run(async_get_rewards())
 
