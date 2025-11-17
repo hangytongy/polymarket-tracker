@@ -1,6 +1,6 @@
 import csv
 from sentence_transformers import SentenceTransformer, util
-from utils import get_all_rewards
+from utils import *
 import sys
 import asyncio
 import aiohttp
