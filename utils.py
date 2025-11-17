@@ -457,7 +457,7 @@ async def fetch_rewards(session, slug):
 
 
 async def async_get_rewards():
-    slugs = ['politics', 'crypto', 'sports', 'business', 'science', 'middle-east']
+    slugs = ['politics', 'crypto', 'sports', 'business','pop-culture','science', 'middle-east']
     all_rewards = []
 
     async with aiohttp.ClientSession() as session:
