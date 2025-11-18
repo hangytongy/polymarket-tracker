@@ -65,8 +65,26 @@ async def get_orders(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not orders:
             await update.message.reply_text("unable to get orders.")
         else:
-            order_details = get_orders_details(orders)
-            msg = str(order_details)
+            msg = str(orders)
+            #await update.message.reply_text(f"📊 Current Orders:\n\n{msg[:4000]}")
+            await send_long_message(update.message.chat, msg)
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error getting orders: {e}")
+
+async def send_long_message(chat, text, chunk_size=4000):
+    for i in range(0, len(text), chunk_size):
+        await chat.send_message(text[i:i+chunk_size])
+
+# --- /rewards command ---
+async def get_rewards(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        orders = get_all_orders()
+        orders = get_all_orders_id(orders)
+        rewards = get_rewards_scoring(orders)
+        if not rewards:
+            await update.message.reply_text("unable to get orders.")
+        else:
+            msg = str(rewards)
             #await update.message.reply_text(f"📊 Current Orders:\n\n{msg[:4000]}")
             await send_long_message(update.message.chat, msg)
     except Exception as e:
@@ -84,6 +102,7 @@ async def main():
     app.add_handler(CommandHandler("remove", remove_market))
     app.add_handler(CommandHandler("markets", get_markets))
     app.add_handler(CommandHandler("orders", get_orders))
+    app.add_handler(CommandHandler("rewards", get_rewards))
 
     print("🤖 Bot is running...")
     await app.run_polling()

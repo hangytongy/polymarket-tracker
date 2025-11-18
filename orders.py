@@ -2,6 +2,7 @@ from py_clob_client.client import ClobClient
 from py_clob_client.clob_types import OrderArgs, OrderType
 from py_clob_client.order_builder.constants import BUY, SELL
 from py_clob_client.clob_types import OpenOrderParams
+from py_clob_client.clob_types import OrdersScoringParams
 from py_clob_client.clob_types import TradeParams
 import os
 import dotenv
@@ -88,20 +89,22 @@ def get_all_orders_id(open_orders):
 
     return all_order_ids
 
-def get_orders_details(order_ids : list):
-    resp = client.get_orders(
-    OpenOrderParams(
-        id=order_ids
-    )
-    )
-    return resp
-    
 
 def cancel_all_orders(all_order_ids):
 
     for order_id in all_order_ids:
         resp     = client.cancel(order_id)
         print("Cancel response:", resp)
+
+
+def get_rewards_scoring(order_ids : list):
+
+    scoring = client.are_orders_scoring(OrdersScoringParams(
+        orderIds=order_ids
+    )
+    )
+
+    return scoring
 
 
 
