@@ -88,6 +88,15 @@ def get_all_orders_id(open_orders):
 
     return all_order_ids
 
+def get_orders_details(order_ids : list):
+    resp = client.get_orders(
+    OpenOrderParams(
+        id=order_ids
+    )
+    )
+    return resp
+    
+
 def cancel_all_orders(all_order_ids):
 
     for order_id in all_order_ids:

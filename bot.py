@@ -61,14 +61,21 @@ async def get_markets(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def get_orders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         orders = get_all_orders()
+        orders = get_all_orders_id(orders)
         if not orders:
             await update.message.reply_text("unable to get orders.")
         else:
-            msg = orders
-            await update.message.reply_text(f"📊 Current Orders:\n\n{msg[:4000]}")
+            order_details = get_orders_details(orders)
+            msg = str(order_details)
+            #await update.message.reply_text(f"📊 Current Orders:\n\n{msg[:4000]}")
+            await send_long_message(update.message.chat, msg)
     except Exception as e:
         await update.message.reply_text(f"❌ Error getting orders: {e}")
 
+async def send_long_message(chat, text, chunk_size=4000):
+    for i in range(0, len(text), chunk_size):
+        await chat.send_message(text[i:i+chunk_size])
+        
 # --- main ---
 async def main():
     app = ApplicationBuilder().token(TOKEN).build()
