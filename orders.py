@@ -106,5 +106,5 @@ def get_rewards_scoring(order_ids : list):
 
     return scoring
 
-
+    
 
