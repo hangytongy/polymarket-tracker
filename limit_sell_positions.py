@@ -23,7 +23,7 @@ if response.status_code == 200:
             event_slug = position['eventSlug']
             asset = position['asset']
             cond_id = position['conditionId']
-            total_size = position['size']
+            total_size = float(position['size'])
             question = position['title']
             print(f"{question} {asset} {total_size}")
 
@@ -33,7 +33,7 @@ if response.status_code == 200:
 
             sorted_asks = sorted(bids, key=lambda x: float(x['price']), reverse=False)
 
-            price = sorted_asks[0]['price']
+            price = float(sorted_asks[0]['price'])
             print(f"price = {price}")
             sell_count = 0
 

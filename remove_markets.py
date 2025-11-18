@@ -8,6 +8,10 @@ import sys
 
 try:
     remove_question = " ".join(sys.argv[1:])
+    print(remove_question)
+    if not remove_question:
+        print("no question")
+        remove_question = input("Input the polymarket full question u want to remove : ")
 
 except:
     remove_question = input("Input the polymarket full question u want to remove : ")

@@ -24,6 +24,14 @@ if use_async:
 else:
     all_rewards = get_all_rewards()
 
+unique = {}
+for reward in all_rewards:
+    q = reward['question'].lower()
+    if q not in unique:
+        unique[q] = reward
+
+all_rewards = list(unique.values())
+
 def recommend_similar_questions(user_input, rewards, top_n=3, threshold=0.3):
     """
     Recommends semantically similar questions from the rewards list.
