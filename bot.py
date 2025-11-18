@@ -5,6 +5,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import os
 import dotenv
 dotenv.load_dotenv()
+from orders import *
 
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # Replace this
@@ -56,6 +57,18 @@ async def get_markets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ Error reading markets.csv: {e}")
 
+# --- /orders command ---
+async def get_orders(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        orders = get_all_orders()
+        if not orders:
+            await update.message.reply_text("unable to get orders.")
+        else:
+            msg = orders
+            await update.message.reply_text(f"📊 Current Orders:\n\n{msg[:4000]}")
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error getting orders: {e}")
+
 # --- main ---
 async def main():
     app = ApplicationBuilder().token(TOKEN).build()
@@ -63,6 +76,7 @@ async def main():
     app.add_handler(CommandHandler("add", add_market))
     app.add_handler(CommandHandler("remove", remove_market))
     app.add_handler(CommandHandler("markets", get_markets))
+    app.add_handler(CommandHandler("orders", get_orders))
 
     print("🤖 Bot is running...")
     await app.run_polling()
