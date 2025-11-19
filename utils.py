@@ -660,8 +660,6 @@ def get_exisiting_positions():
     return assets
 
 
-
-
 def bot_get_all_orders_info():
 
     def format_orders(all_data):
@@ -721,7 +719,7 @@ def bot_get_all_orders_info():
                             'question' : reward_data['question'],
                             'outcome' : order['outcome'],
                             'side' : order['side'],
-                            'size' : order['size'],
+                            'size' : order['original_size'],
                             'price' : order['price'],
                             'size matched' : order['size_matched']  
                             }
