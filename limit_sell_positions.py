@@ -5,12 +5,14 @@ from send_telegram_message import send_telegram_message
 from utils import *
 from orders import *
 import pandas as pd
+dotenv.load_dotenv()
 
-manual_sells = pd.read_csv("manualsell.csv")
+MANUALSELL_DIR = os.getenv("MANUALSELL_DIR")
+
+manual_sells = pd.read_csv(MANUALSELL_DIR)
 manual_sells['question'] = manual_sells['question'].apply(lambda x: x.lower())
 manual_sells_q = manual_sells['question'].tolist()
 
-dotenv.load_dotenv()
 
 FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
 
