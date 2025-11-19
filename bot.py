@@ -6,6 +6,7 @@ import os
 import dotenv
 dotenv.load_dotenv()
 from orders import *
+from utils import *
 import csv
 
 
@@ -61,12 +62,11 @@ async def get_markets(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- /orders command ---
 async def get_orders(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        orders = get_all_orders()
-        orders = get_all_orders_id(orders)
+        orders = bot_get_all_orders_info()
         if not orders:
             await update.message.reply_text("unable to get orders.")
         else:
-            msg = str(orders)
+            msg = orders
             #await update.message.reply_text(f"📊 Current Orders:\n\n{msg[:4000]}")
             await send_long_message(update.message.chat, msg)
     except Exception as e:

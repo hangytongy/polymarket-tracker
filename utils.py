@@ -11,6 +11,7 @@ import os
 import dotenv
 import time
 from web3 import Web3
+from orders import *
 
 dotenv.load_dotenv()
 
@@ -657,3 +658,84 @@ def get_exisiting_positions():
                 asset = position['asset']
                 assets.append(asset)
     return assets
+
+
+
+
+def bot_get_all_orders_info():
+
+    def format_orders(all_data):
+        lines = ["📊 Current Orders\n"]
+        
+        for item in all_data:
+            lines.append(
+                f"🟦 {item['question']}\n"
+                f"• Outcome: {item['outcome']}\n"
+                f"• Side: {item['side']}\n"
+                f"• Size: {item['size']}\n"
+                f"• Price: {item['price']}\n"
+                f"• Matched: {item['size matched']}\n"
+            )
+        
+        return "\n".join(lines)
+
+    use_async = os.getenv("USE_ASYNC", "0") == "1"
+
+    try:
+        #if use async to run, also need to change in add_markets.py
+        if use_async:
+            all_rewards = asyncio.run(async_get_rewards())
+        else:
+            all_rewards = get_all_rewards()
+
+        # === STEP 1: Load CSV ===
+        file_path = "markets.csv"   # Change to your actual CSV file path
+
+        df = pd.read_csv(file_path, usecols=['question','market_id', 'side'], dtype={'question' : str,'market_id': str, 'side': str})
+
+        # === STEP 2: Validate columns ===
+        required_cols = {'question','market_id', 'side'}
+        missing_cols = required_cols - set(df.columns)
+
+        if missing_cols:
+            raise ValueError(f"❌ Missing required columns: {missing_cols}")
+        
+        all_orders = get_all_orders()
+
+        # === STEP 3: Continue with your logic ===
+        all_data = []
+        for _, row in df.iterrows():
+            market_id = str(row['market_id'])
+            side = str(row['side'])
+
+            try:
+
+                reward_data, token_id = get_wanted_rewards_market(all_rewards,market_id,side)
+
+                if token_id:
+
+                    #check for current pos and if have, skip if set_no_buy_if_got_existingPos = True
+                    for order in all_orders:
+                        if token_id == order['asset_id']:
+                            d = {
+                            'question' : reward_data['question'],
+                            'outcome' : order['outcome'],
+                            'side' : order['side'],
+                            'size' : order['size'],
+                            'price' : order['price'],
+                            'size matched' : order['size_matched']  
+                            }
+                            all_data.append(d)
+
+            except Exception as e:
+                print(f"{e} : error getting assets data")
+                return None
+        if all_data:
+            message = format_orders(all_data)
+            return message
+        else:
+            message = "no data at all"
+            return message
+    except Exception as e:
+        print(f"error {e}")
+        return f"error {e}"
