@@ -739,6 +739,25 @@ def bot_get_all_orders_info():
         return f"error {e}"
 
 def bot_get_positions():
+
+    def format_positions(all_data):
+        lines = ["📊 Current Positions\n"]
+        
+        for item in all_data:
+            lines.append(
+                f"🟦 {item['question']}\n"
+                f"• Outcome: {item['outcome']}\n"
+                f"• Size: {item['size']}\n"
+                f"• Buyin Price: {item['buyin_price']}\n"
+                f"• init val: {item['init_val']}\n"
+                f"• curr val: {item['curr_val']}\n"
+                f"• PnL: {item['PnL']}\n"
+
+            )
+        
+        return "\n".join(lines)
+    
+    all_pos = []
     FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
 
     positions_url = f"https://data-api.polymarket.com/positions?user={FUNDER}"
@@ -749,6 +768,19 @@ def bot_get_positions():
 
         positions = response.json()
         if positions:
-            return positions
+
+            for pos in positions:
+                d ={
+                    'question' : pos['title'],
+                    'outcome' : pos['outcome'],
+                    'size' : pos['size'],
+                    'buyin_price' : pos['avgPrice'],
+                    'init_val' : pos['initialValue'],
+                    'curr_val' : pos['currentValue'],
+                    'PnL' : pos['cashPnl']
+                }
+                all_pos.append(d)
+            message = format_positions(all_pos)
+            return message
         else:
             return None

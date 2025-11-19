@@ -83,7 +83,7 @@ async def get_positions(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not positions:
             await update.message.reply_text("No positons found.")
         else:
-            msg = str(positions)
+            msg = positions
             await send_long_message(update.message.chat, msg)
     except Exception as e:
         await update.message.reply_text(f"❌ Error getting positions: {e}")
