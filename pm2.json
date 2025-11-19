@@ -2,11 +2,11 @@
     "apps": [
       {
         "name": "polymarkets_rewards",
-        "script": "venv/bin/python3",
+        "disabled_script": "venv/bin/python3",
         "cron_restart": "*/1 * * * *",
         "autorestart" : false,
         "time": true,
-        "args" : "rewards.py",
+        "disabled_args" : "rewards.py",
         "cwd" : "/root/polymarket-tracker"
       },
       {
@@ -17,7 +17,16 @@
         "time": true,
         "args" : "limit_sell_positions.py",
         "cwd" : "/root/polymarket-tracker"
+      },
+      {
+        "name": "polymarkets_rewards",
+        "script": "venv/bin/python3",
+        "args": "scheduler_rewards.py",
+        "cwd": "/root/polymarket-tracker",
+        "autorestart": true,
+        "time": true
       }
+      
 
     ]
   }
