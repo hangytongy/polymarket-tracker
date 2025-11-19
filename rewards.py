@@ -147,10 +147,11 @@ try:
                 #check if there is a current order in this market
                 if current_orders:
                     #check if the current order is in the reward bid range
+                    total_buys = 0
                     for order in current_orders:
                         #check for only buy orders
                         if order['side'] == 'BUY':
-                            
+                            total_buys += 1
                             #if market too volatile
                             if reward_mid_range - float(order['price']) > VOLATILITY_THRESHOLD:
                                 message = f"volatility to high for {question}"
@@ -176,7 +177,19 @@ try:
                                 message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {question} and {side} and size {size}"
                                 send_telegram_message(message)
 
+                    if total_buys == 0:
+                        print(f'No current order in this market')
 
+                        if wallet_balance < size * reward_mid_range:
+                            message = f"not enough $ for {question}"
+                            send_telegram_message(message)
+                            continue
+
+                        bid_price = reward_mid_range
+                        place_order(token_id,bid_price,size)
+                        print(f"placed order at {bid_price} for {question} and {side}")
+                        message = f"placed order at {bid_price} for {question} and {side} at size {size}"
+                        send_telegram_message(message)
                 else:
                     print(f'No current order in this market')
 
