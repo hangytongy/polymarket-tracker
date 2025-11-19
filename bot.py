@@ -132,7 +132,7 @@ async def main():
     app.add_handler(CommandHandler("orders", get_orders))
     app.add_handler(CommandHandler("rewards", get_rewards))
     app.add_handler(CommandHandler("manual", get_manual))
-    app.add_handler(CommandHandler("positons", get_positions))
+    app.add_handler(CommandHandler("positions", get_positions))
 
     print("🤖 Bot is running...")
     await app.run_polling()
