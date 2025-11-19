@@ -16,11 +16,12 @@ def round_down(value, decimals):
 buy_in_size = 50 #not used anymore
 my_min_size = 100
 my_max_size = 800
-my_min_amt = 100
+my_min_amt = int(os.getenv("MIN_AMT", "100"))
 size_agression = float(os.getenv("SIZE_AGRESSION", "0.02")) #% of total bid rewards liquidity
 agression = float(os.getenv("AGRESSION", "0.5")) # 0.1-0.9
 set_buy_if_got_existingPos = os.getenv("BUY_EXISITNG_POS", "0") == "1"
 use_async = os.getenv("USE_ASYNC", "0") == "1"
+VOLATILITY_THRESHOLD = float(os.getenv("VOLATILITY_THRESHOLD", "0.03"))
 
 try:
     #if use async to run, also need to change in add_markets.py
@@ -149,6 +150,13 @@ try:
                     for order in current_orders:
                         #check for only buy orders
                         if order['side'] == 'BUY':
+                            
+                            #if market too volatile
+                            if reward_mid_range - float(order['price']) > VOLATILITY_THRESHOLD:
+                                message = f"volatility to high for {question}"
+                                send_telegram_message(message)
+                                continue
+
                             if float(order['price']) >= reward_bid_min and float(order['price']) <= reward_mid_range:
                             #if float(order['price']) >= mid_range_lower and float(order['price']) <= mid_range_upper:
                                 print(f'Current order is in the reward bid range')

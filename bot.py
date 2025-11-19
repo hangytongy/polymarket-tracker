@@ -6,6 +6,7 @@ import os
 import dotenv
 dotenv.load_dotenv()
 from orders import *
+import csv
 
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # Replace this
@@ -93,6 +94,21 @@ async def get_rewards(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def send_long_message(chat, text, chunk_size=4000):
     for i in range(0, len(text), chunk_size):
         await chat.send_message(text[i:i+chunk_size])
+
+# --- /manual command ---
+async def get_manual(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) < 1:
+        await update.message.reply_text("Usage: /manual <question>")
+        return
+
+    question = " ".join(context.args[:])
+    try:
+        with open("manualsell.csv", "a", newline='', encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow([question])
+        await update.message.reply_text(f"🗑️ Manual market added:\n{question}")
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {e}")
         
 # --- main ---
 async def main():
@@ -103,6 +119,7 @@ async def main():
     app.add_handler(CommandHandler("markets", get_markets))
     app.add_handler(CommandHandler("orders", get_orders))
     app.add_handler(CommandHandler("rewards", get_rewards))
+    app.add_handler(CommandHandler("manual", get_manual))
 
     print("🤖 Bot is running...")
     await app.run_polling()

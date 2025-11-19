@@ -4,6 +4,11 @@ import requests
 from send_telegram_message import send_telegram_message
 from utils import *
 from orders import *
+import pandas as pd
+
+manual_sells = pd.read_csv("manualsell.csv")
+manual_sells['question'] = manual_sells['question'].apply(lambda x: x.lower())
+manual_sells_q = manual_sells['question'].tolist()
 
 dotenv.load_dotenv()
 
@@ -26,6 +31,10 @@ if response.status_code == 200:
             total_size = float(position['size'])
             question = position['title']
             print(f"{question} {asset} {total_size}")
+
+            if question.lower() in manual_sells_q:
+                print("skip this question")
+                continue
 
             #get order book price
             ob = get_orderbook_data(asset)
