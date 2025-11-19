@@ -22,6 +22,7 @@ agression = float(os.getenv("AGRESSION", "0.5")) # 0.1-0.9
 set_buy_if_got_existingPos = os.getenv("BUY_EXISITNG_POS", "0") == "1"
 use_async = os.getenv("USE_ASYNC", "0") == "1"
 VOLATILITY_THRESHOLD = float(os.getenv("VOLATILITY_THRESHOLD", "0.03"))
+MARKETS_DIR = os.getenv('MARKETS_DIR')
 
 try:
     #if use async to run, also need to change in add_markets.py
@@ -31,7 +32,7 @@ try:
         all_rewards = get_all_rewards()
 
     # === STEP 1: Load CSV ===
-    file_path = "markets.csv"   # Change to your actual CSV file path
+    file_path = MARKETS_DIR   # Change to your actual CSV file path
 
     df = pd.read_csv(file_path, usecols=['question','market_id', 'side'], dtype={'question' : str,'market_id': str, 'side': str})
 
