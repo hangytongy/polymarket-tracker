@@ -76,6 +76,18 @@ async def send_long_message(chat, text, chunk_size=4000):
     for i in range(0, len(text), chunk_size):
         await chat.send_message(text[i:i+chunk_size])
 
+# --- /markets command ---
+async def get_positions(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        positions = bot_get_positions()
+        if not positions:
+            await update.message.reply_text("No positons found.")
+        else:
+            msg = str(positions)
+            await send_long_message(update.message.chat, msg)
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error getting positions: {e}")
+
 # --- /rewards command ---
 async def get_rewards(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
@@ -120,6 +132,7 @@ async def main():
     app.add_handler(CommandHandler("orders", get_orders))
     app.add_handler(CommandHandler("rewards", get_rewards))
     app.add_handler(CommandHandler("manual", get_manual))
+    app.add_handler(CommandHandler("positons", get_positions))
 
     print("🤖 Bot is running...")
     await app.run_polling()

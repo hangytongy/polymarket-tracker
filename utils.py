@@ -737,3 +737,18 @@ def bot_get_all_orders_info():
     except Exception as e:
         print(f"error {e}")
         return f"error {e}"
+
+def bot_get_positions():
+    FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
+
+    positions_url = f"https://data-api.polymarket.com/positions?user={FUNDER}"
+
+    response = requests.get(positions_url)
+
+    if response.status_code == 200:
+
+        positions = response.json()
+        if positions:
+            return positions
+        else:
+            return None
