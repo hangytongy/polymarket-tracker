@@ -8,6 +8,9 @@ import dotenv
 
 dotenv.load_dotenv()
 
+MARKETS_DIR = os.getenv('MARKETS_DIR')
+file_path = MARKETS_DIR
+
 use_async = os.getenv("USE_ASYNC", "0") == "1"
 
 model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -69,7 +72,7 @@ for reward in all_rewards:
         print(f"market id = {market_id }")
                 
         new_row = [question.lower(),market_id,outcome]
-        with open("markets.csv", "a", newline="") as f:
+        with open(file_path, "a", newline="") as f:
             writer = csv.writer(f)
             writer.writerow(new_row)
         print(f"new row added for market {question} with outcome {outcome}")

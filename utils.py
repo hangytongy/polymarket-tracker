@@ -687,7 +687,7 @@ def bot_get_all_orders_info():
             all_rewards = get_all_rewards()
 
         # === STEP 1: Load CSV ===
-        file_path = "markets.csv"   # Change to your actual CSV file path
+        file_path = os.getenv('MARKETS_DIR')   # Change to your actual CSV file path
 
         df = pd.read_csv(file_path, usecols=['question','market_id', 'side'], dtype={'question' : str,'market_id': str, 'side': str})
 

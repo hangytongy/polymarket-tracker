@@ -50,7 +50,8 @@ async def remove_market(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- /markets command ---
 async def get_markets(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        df = pd.read_csv("markets.csv")
+        MARKETS_DIR = os.getenv('MARKETS_DIR')
+        df = pd.read_csv(MARKETS_DIR)
         if df.empty:
             await update.message.reply_text("No markets found.")
         else:
@@ -115,7 +116,8 @@ async def get_manual(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     question = " ".join(context.args[:])
     try:
-        with open("manualsell.csv", "a", newline='', encoding="utf-8") as f:
+        MANUALSELL_DIR = os.getenv("MANUALSELL_DIR")
+        with open(MANUALSELL_DIR, "a", newline='', encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow([question])
         await update.message.reply_text(f"🗑️ Manual market added:\n{question}")

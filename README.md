@@ -1,5 +1,6 @@
 # polymarket-tracker
 
+```
 apt update
 apt install python3.12-venv -y
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
@@ -14,3 +15,4 @@ pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 
 cp .sample.env .env
+mkdir data
