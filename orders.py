@@ -24,8 +24,6 @@ client = ClobClient(
 client.set_api_creds(client.create_or_derive_api_creds())
 
 def get_current_orders(market_id):
-    # Example: get all active orders from your account (no filter)
-    open_orders = client.get_orders(OpenOrderParams())
     # Example: get active orders for a specific market
     market_id = market_id#"0x123456..."  # condition/market ID
     filtered_orders = client.get_orders(OpenOrderParams(asset_id=market_id))
