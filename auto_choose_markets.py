@@ -166,7 +166,7 @@ liquidity_threshold = 50000
 bid_liquidity_threshold = 10000
 vol_threshold = 100000
 yes_skew_threshold = 85/15
-no_skew_threshold = yes_skew_threshold ^ -1
+no_skew_threshold = 15/85
 reward_threshold = 20
 volitility_threshold = 0.003
 use_async = os.getenv("USE_ASYNC", "0") == "1"
