@@ -165,7 +165,7 @@ def get_market_info(market_id : int):
         outcomes = json.loads(data['outcomes'])
 
         prices = json.loads(data['outcomePrices'])
-        
+
         last_price = data['lastTradePrice'] if data['lastTradePrice'] else None
 
         question = data['question'] if data['question'] else None 
@@ -210,11 +210,32 @@ def bot_get_market_info(market_id):
 
     def format_rewards_data(rewards_data):
         msg = "🎁 *Rewards Data*\n\n"
+
         for r in rewards_data:
-            msg += (
-                f"Token {r['token_id']} ({r['outcome']}):\n"
-                f"→ Reward OB: {r['reward_order_book']}\n\n"
-                )
+            token_id = r['token_id']
+            outcome = r['outcome']
+            ob = r['reward_order_book']
+
+            msg += f"*Token {token_id}* ({outcome}):\n"
+
+            # Bids
+            if ob.get('bids'):
+                msg += "  Bids:\n"
+                for bid in ob['bids'][:10]:  # show top 5 only for brevity
+                    price = bid['price']
+                    size = bid['size']
+                    msg += f"    {price:>8}  |  {size:>10}\n"
+
+            # Asks
+            if ob.get('asks'):
+                msg += "  Asks:\n"
+                for ask in ob['asks'][:10]:  # show top 5 only
+                    price = ask['price']
+                    size = ask['size']
+                    msg += f"    {price:>8}  |  {size:>10}\n"
+
+            msg += "\n"
+
         return msg
     
     def format_market_data(market_info):
