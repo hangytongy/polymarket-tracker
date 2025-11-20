@@ -208,7 +208,7 @@ def get_market_info(market_id : int):
 
 def bot_get_market_info(market_id):
 
-    def format_rewards_data(rewards_data, max_rows=10):
+    def format_rewards_data(rewards_data, max_rows=5):
         msg = "🎁 *Rewards Data*\n\n"
 
         for r in rewards_data:
@@ -218,18 +218,20 @@ def bot_get_market_info(market_id):
 
             msg += f"*Token {token_id}* ({outcome}):\n"
 
-            # Asks first (lowest to highest)
+            # Asks: take the lowest `max_rows` prices
             if ob.get('asks'):
-                msg += "  Asks:\n"
-                for ask in sorted(ob['asks'], key=lambda x: x['price'])[:max_rows *-1]:
+                lowest_asks = sorted(ob['asks'], key=lambda x: x['price'])[:max_rows]
+                msg += "  Asks (lowest):\n"
+                for ask in lowest_asks:
                     price = ask['price']
                     size = ask['size']
                     msg += f"    {price:>8}  |  {size:>10}\n"
 
-            # Bids below (highest to lowest)
+            # Bids: highest bids first
             if ob.get('bids'):
-                msg += "  Bids:\n"
-                for bid in sorted(ob['bids'], key=lambda x: x['price'], reverse=True)[:max_rows]:
+                highest_bids = sorted(ob['bids'], key=lambda x: x['price'], reverse=True)[:max_rows]
+                msg += "  Bids (highest):\n"
+                for bid in highest_bids:
                     price = bid['price']
                     size = bid['size']
                     msg += f"    {price:>8}  |  {size:>10}\n"
@@ -237,6 +239,7 @@ def bot_get_market_info(market_id):
             msg += "\n"
 
         return msg
+
 
     
     def format_market_data(market_info):
