@@ -102,10 +102,6 @@ async def get_rewards(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ Error getting orders: {e}")
 
-async def send_long_message(chat, text, chunk_size=4000):
-    for i in range(0, len(text), chunk_size):
-        await chat.send_message(text[i:i+chunk_size])
-
 # --- /manual command ---
 async def get_manual(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) < 1:
@@ -131,7 +127,7 @@ async def get_market_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
     market_id = " ".join(context.args[:])
     try:
         msg = bot_get_market_info(market_id)
-        await update.message.reply_text(f"{msg}")
+        await send_long_message(update.message.chat, msg)
     except Exception as e:
         await update.message.reply_text(f"❌ Error: {e}")
 
@@ -151,6 +147,10 @@ async def place_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"✅ Order placed:\n{result}")
     except Exception as e:
         await update.message.reply_text(f"❌ Error: {e}")
+
+async def send_long_message(chat, text, chunk_size=4000):
+    for i in range(0, len(text), chunk_size):
+        await chat.send_message(text[i:i+chunk_size])
         
 # --- main ---
 async def main():
