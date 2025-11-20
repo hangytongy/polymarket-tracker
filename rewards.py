@@ -172,8 +172,13 @@ try:
                                     message = f"not enough $ for {question}"
                                     send_telegram_message(message)
                                     continue
+                                
+                                #if at highest bid, minus 1 tick size
+                                if reward_mid_range == reward_bid_max:
+                                    bid_price = reward_bid_max - tick
+                                else:
+                                    bid_price = reward_mid_range
 
-                                bid_price = reward_mid_range
                                 place_order(token_id,bid_price,size)
                                 print(f"placed order at {bid_price} for {question} and {side}")
                                 message = f"Order out of reward range, cancel old price {order['price']} and placed order at {bid_price} for {question} and {side} and size {size}"
@@ -200,7 +205,11 @@ try:
                         send_telegram_message(message)
                         continue
 
-                    bid_price = reward_mid_range
+                    #if at highest bid, minus 1 tick size
+                    if reward_mid_range == reward_bid_max:
+                        bid_price = reward_bid_max - tick
+                    else:
+                        bid_price = reward_mid_range
                     place_order(token_id,bid_price,size)
                     print(f"placed order at {bid_price} for {question} and {side}")
                     message = f"placed order at {bid_price} for {question} and {side} at size {size}"
