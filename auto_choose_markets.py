@@ -29,12 +29,15 @@ def get_price_history(token_id, start_time):
         return None
 
     # convert to DataFrame
-    df = pd.DataFrame(data)
+    df = pd.DataFrame(data.get('history', []))
     print(df)
-    df['price'] = df['p'].astype(float)
-    df['timestamp'] = pd.to_datetime(df['t'], unit='s')
-    
-    return df
+    if df.empty or len(df) < 3:
+        return None
+    else:
+        df['price'] = df['p'].astype(float)
+        df['timestamp'] = pd.to_datetime(df['t'], unit='s')
+        
+        return df
 
 def calculate_volatility(df):
     """
