@@ -238,7 +238,10 @@ try:
         if reward_amt > reward_threshold:
             reward_trigger = True
 
+        print("check conditions")
         if spread_trigger and skew_trigger and liquidity_trigger and volume_trigger and reward_trigger:
+
+            print("check for each token id")
 
             for token_id in token_ids:
                 index = token_ids.index(token_id)
