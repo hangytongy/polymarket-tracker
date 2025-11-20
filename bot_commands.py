@@ -166,6 +166,8 @@ def get_market_info(market_id : int):
 
         prices = json.loads(data['outcomePrices'])
 
+        spread = data['spread'] if data['spread'] else None
+
         last_price = data['lastTradePrice'] if data['lastTradePrice'] else None
 
         question = data['question'] if data['question'] else None 
@@ -188,6 +190,7 @@ def get_market_info(market_id : int):
             'token_ids' : token_ids,
             'outcomes' : outcomes,
             'prices' : prices,
+            'spread' : spread,
             'last_price' : last_price,
             'question' : question,
             'tick_size' : tick,

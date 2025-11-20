@@ -6,8 +6,43 @@ import aiohttp
 import dotenv
 import os
 import requests
+from bot_commands import get_market_info
+from utils import *
+import numpy as np
 
 dotenv.load_dotenv()
+
+def get_price_history(token_id, start_time):
+    """
+    Fetch historical prices for a market from Polymarket CLOB.
+    """
+    url_price = f"https://clob.polymarket.com/prices-history?startTs={start_time}&market={token_id}&fidelity=120"
+    response = requests.get(url_price)
+    
+    if response.status_code != 200:
+        print(f"Error fetching data: {response.status_code}")
+        return None
+
+    data = response.json()
+    if not data:
+        print("No data returned from API")
+        return None
+
+    # convert to DataFrame
+    df = pd.DataFrame(data)
+    df['price'] = df['price'].astype(float)
+    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+    
+    return df
+
+def calculate_volatility(df):
+    """
+    Calculate volatility as standard deviation of log returns.
+    """
+    df = df.sort_values('timestamp')  # Ensure chronological order
+    df['log_return'] = np.log(df['price'] / df['price'].shift(1))
+    volatility = df['log_return'].std()
+    return volatility
 
 def get_all_rewards():
     all_rewards = []
@@ -126,15 +161,15 @@ def get_wanted_rewards_market(all_rewards,market_id : str, side : str):
     return None, None
 
 
-buy_in_size = 50 #not used anymore
-my_min_size = 100
-my_max_size = 800
-my_min_amt = int(os.getenv("MIN_AMT", "100"))
-size_agression = float(os.getenv("SIZE_AGRESSION", "0.02")) #% of total bid rewards liquidity
-agression = float(os.getenv("AGRESSION", "0.5")) # 0.1-0.9
-set_buy_if_got_existingPos = os.getenv("BUY_EXISITNG_POS", "0") == "1"
+#--params--
+liquidity_threshold = 50000
+bid_liquidity_threshold = 10000
+vol_threshold = 100000
+yes_skew_threshold = 85/15
+no_skew_threshold = yes_skew_threshold ^ -1
+reward_threshold = 20
+volitility_threshold = 0.003
 use_async = os.getenv("USE_ASYNC", "0") == "1"
-VOLATILITY_THRESHOLD = float(os.getenv("VOLATILITY_THRESHOLD", "0.03"))
 MARKETS_DIR = os.getenv('MARKETS_DIR')
 
 try:
@@ -146,6 +181,93 @@ try:
 
     print(all_rewards)
 
+    start_time = int(time.time() - 24*3600) * 1000
+
+    for reward in all_rewards:
+        market_id = reward['market_id']
+        question = reward['question']
+        token_ids = reward['tokens_id']
+        outcomes = reward['outcomes']
+        reward_end = reward['reward_end'][0]
+        reward_amt = reward['reward_amt'][0]
+        reward_spread = reward['reward_spread']
+        reward_min_size = reward['reward_min_size']
+        competitiveness = reward['competitiveness']
+
+        market_info = get_market_info(market_id)
+
+        #2. spread not more than x
+        spread = market_info['spread']
+        tick = market_info['tick_size']
+
+        spread_trigger = False
+        if tick == 0.01:
+            if spread <= 0.01:
+                spread_trigger = True
+        else:
+            if spread <= 2*tick:
+                spread_trigger = True
+
+        skew_trigger = False
+        #5. outcome yes/no only
+        outcomes = market_info['outcomes']
+        if [o.lower() for o in outcomes] == ['yes', 'no']:
+        #3. yes/no skew
+            yes_no_price = market_info['prices']
+            skew_yes = yes_no_price[0] / yes_no_price[1]
+            if skew_yes > yes_skew_threshold or skew_yes < no_skew_threshold:
+                skew_trigger = True
+            
+        liquidity_trigger = False
+        #1. high liqudiity
+        total_liquidity = market_info['liquidity']
+        if total_liquidity > liquidity_threshold:
+            liquidity_trigger = True
+
+        #4. volume?
+        volume_trigger = False
+        volume = market_info['volume']
+        if volume > vol_threshold:
+            volume_trigger = True
+
+        #6. reward > X amount
+        reward_trigger = False
+        reward_amt = market_info['reward_amt']
+        if reward_amt > reward_threshold:
+            reward_trigger = True
+
+        if spread_trigger and skew_trigger and liquidity_trigger and volume_trigger and reward_trigger:
+
+            for token_id in token_ids:
+                index = token_ids.index(token_id)
+                outcome = outcomes[index]
+
+                ob_data = get_orderbook_data(token_id)
+                #get reward bid and ask spread
+                reward_ob_data = get_reward_ob_data(market_info,ob_data)
+
+                bids = reward_ob_data['bids']
+                
+                #7. reward bid liquidity > X amount
+                bid_liquidity_trigger = False
+                total_bid_liquidity = sum(float(bid['price']) * float(bid['size']) for bid in bids)
+                if total_bid_liquidity > bid_liquidity_threshold:
+                    bid_liquidity_trigger = True
+
+                #8. volatility? price history do not fluctate more than 0.003 over 24h period of time
+                volitility_trigger = False
+                df_prices = get_price_history(token_id, start_time)
+                if df_prices is not None and not df_prices.empty:
+                    volitility = calculate_volatility(df_prices)
+                    print(f"Volatility for token {token_id}: {volitility:.6f}")
+                    if volitility <= volitility_threshold:
+                        volitility_trigger = True
+                else:
+                    print("No price data available")
+
+                if bid_liquidity_trigger and volitility_trigger:
+                    message = f"{question} -- {outcome} is a good market to MM {market_info['outcomes']} {market_info['prices']} with rewards {market_info['reward_amt']}"
+                        
     #conditions to choose markets
     #1. high liqudiity
     #2. spread not more than x
