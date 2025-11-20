@@ -208,7 +208,7 @@ def get_market_info(market_id : int):
 
 def bot_get_market_info(market_id):
 
-    def format_rewards_data(rewards_data):
+    def format_rewards_data(rewards_data, max_rows=10):
         msg = "🎁 *Rewards Data*\n\n"
 
         for r in rewards_data:
@@ -218,25 +218,26 @@ def bot_get_market_info(market_id):
 
             msg += f"*Token {token_id}* ({outcome}):\n"
 
-            # Bids
-            if ob.get('bids'):
-                msg += "  Bids:\n"
-                for bid in ob['bids'][:10]:  # show top 5 only for brevity
-                    price = bid['price']
-                    size = bid['size']
-                    msg += f"    {price:>8}  |  {size:>10}\n"
-
-            # Asks
+            # Asks first (lowest to highest)
             if ob.get('asks'):
                 msg += "  Asks:\n"
-                for ask in ob['asks'][:10]:  # show top 5 only
+                for ask in sorted(ob['asks'], key=lambda x: x['price'])[:max_rows *-1]:
                     price = ask['price']
                     size = ask['size']
+                    msg += f"    {price:>8}  |  {size:>10}\n"
+
+            # Bids below (highest to lowest)
+            if ob.get('bids'):
+                msg += "  Bids:\n"
+                for bid in sorted(ob['bids'], key=lambda x: x['price'], reverse=True)[:max_rows]:
+                    price = bid['price']
+                    size = bid['size']
                     msg += f"    {price:>8}  |  {size:>10}\n"
 
             msg += "\n"
 
         return msg
+
     
     def format_market_data(market_info):
         msg = "📌 *Market Info*\n"
