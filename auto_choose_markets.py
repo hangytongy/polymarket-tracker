@@ -218,7 +218,11 @@ try:
         if [o.lower() for o in outcomes] == ['yes', 'no']:
         #3. yes/no skew
             yes_no_price = market_info['prices']
-            skew_yes = yes_no_price[0] / yes_no_price[1]
+            yes_price = float(yes_no_price[0])
+            no_price  = float(yes_no_price[1])
+
+            skew_yes = yes_price / no_price
+
             if skew_yes > yes_skew_threshold or skew_yes < no_skew_threshold:
                 skew_trigger = True
             
