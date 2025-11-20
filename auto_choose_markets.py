@@ -261,6 +261,7 @@ try:
                 reward_ob_data = get_reward_ob_data(market_info,ob_data)
 
                 bids = reward_ob_data['bids']
+                print(bids)
                 
                 #7. reward bid liquidity > X amount
                 bid_liquidity_trigger = False
