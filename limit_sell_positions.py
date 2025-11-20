@@ -76,7 +76,7 @@ if response.status_code == 200:
             if sell_count == 0:
                 print("add sell order")
                 place_sell_order(asset,price,total_size)
-                message = f"SELL ORDER for {question} at size {total_size}"
+                message = f"SELL ORDER for {question} at size {total_size} at price {price}"
                 send_telegram_message(message)
 
 
