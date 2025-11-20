@@ -8,6 +8,7 @@ import pandas as pd
 dotenv.load_dotenv()
 
 MANUALSELL_DIR = os.getenv("MANUALSELL_DIR")
+SET_NEVER_BELOW_COST=os.getenv("SET_NEVER_BELOW_COST","1") == "1"
 
 manual_sells = pd.read_csv(MANUALSELL_DIR)
 manual_sells['question'] = manual_sells['question'].apply(lambda x: x.lower())
@@ -32,7 +33,8 @@ if response.status_code == 200:
             cond_id = position['conditionId']
             total_size = float(position['size'])
             question = position['title']
-            print(f"{question} {asset} {total_size}")
+            avg_price = position['avgPrice']
+            print(f"{question} {asset} {total_size} - {avg_price}")
 
             if question.lower() in manual_sells_q:
                 print("skip this question")
@@ -46,6 +48,11 @@ if response.status_code == 200:
 
             price = float(sorted_asks[0]['price'])
             print(f"price = {price}")
+
+            if price < avg_price and SET_NEVER_BELOW_COST:
+                print("skip, price is lower than avg price")
+                continue
+
             sell_count = 0
 
             #check for current sell orders and cancel and change price if not lowest price
