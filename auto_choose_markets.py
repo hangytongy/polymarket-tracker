@@ -30,7 +30,6 @@ def get_price_history(token_id, start_time):
 
     # convert to DataFrame
     df = pd.DataFrame(data.get('history', []))
-    print(df)
     if df.empty or len(df) < 3:
         return None
     else:
@@ -187,111 +186,113 @@ try:
     start_time = int(time.time() - 24*3600) * 1000
 
     for reward in all_rewards:
-        market_id = reward['market_id']
-        question = reward['question']
-        token_ids = reward['tokens_id']
-        outcomes = reward['outcomes']
-        reward_end = reward['reward_end'][0]
-        reward_amt = reward['reward_amt'][0]
-        reward_spread = reward['reward_spread']
-        reward_min_size = reward['reward_min_size']
-        competitiveness = reward['competitiveness']
+        try:
+            market_id = reward['market_id']
+            question = reward['question']
+            token_ids = reward['tokens_id']
+            outcomes = reward['outcomes']
+            reward_end = reward['reward_end'][0]
+            reward_amt = reward['reward_amt'][0]
+            reward_spread = reward['reward_spread']
+            reward_min_size = reward['reward_min_size']
+            competitiveness = reward['competitiveness']
 
-        print(f"-----{market_id}-----")
+            print(f"-----{market_id}-----")
 
-        market_info = get_market_info(market_id)
+            market_info = get_market_info(market_id)
 
 
-        #2. spread not more than x
-        spread = market_info['spread']
-        tick = market_info['tick_size']
+            #2. spread not more than x
+            spread = market_info['spread']
+            tick = market_info['tick_size']
 
-        spread_trigger = False
-        if tick == 0.01:
-            if spread <= 0.01:
-                spread_trigger = True
-        else:
-            if spread <= 2*tick:
-                spread_trigger = True
+            spread_trigger = False
+            if tick == 0.01:
+                if spread <= 0.01:
+                    spread_trigger = True
+            else:
+                if spread <= 2*tick:
+                    spread_trigger = True
 
-        skew_trigger = False
-        #5. outcome yes/no only
-        outcomes = market_info['outcomes']
-        if [o.lower() for o in outcomes] == ['yes', 'no']:
-        #3. yes/no skew
-            yes_no_price = market_info['prices']
-            yes_price = float(yes_no_price[0])
-            no_price  = float(yes_no_price[1])
+            skew_trigger = False
+            #5. outcome yes/no only
+            outcomes = market_info['outcomes']
+            if [o.lower() for o in outcomes] == ['yes', 'no']:
+            #3. yes/no skew
+                yes_no_price = market_info['prices']
+                yes_price = float(yes_no_price[0])
+                no_price  = float(yes_no_price[1])
 
-            skew_yes = yes_price / no_price
+                skew_yes = yes_price / no_price
 
-            if skew_yes > yes_skew_threshold or skew_yes < no_skew_threshold:
-                skew_trigger = True
-            
-        liquidity_trigger = False
+                if skew_yes > yes_skew_threshold or skew_yes < no_skew_threshold:
+                    skew_trigger = True
+                
+            liquidity_trigger = False
+            #1. high liqudiity
+            total_liquidity = market_info['liquidity']
+            if total_liquidity > liquidity_threshold:
+                liquidity_trigger = True
+
+            #4. volume?
+            volume_trigger = False
+            volume = market_info['volume']
+            if volume > vol_threshold:
+                volume_trigger = True
+
+            #6. reward > X amount
+            reward_trigger = False
+            reward_amt = market_info['reward_amt']
+            if reward_amt > reward_threshold:
+                reward_trigger = True
+
+            if spread_trigger and skew_trigger and liquidity_trigger and volume_trigger and reward_trigger:
+
+                print("check for each token id")
+
+                for token_id in token_ids:
+                    index = token_ids.index(token_id)
+                    outcome = outcomes[index]
+
+                    ob_data = get_orderbook_data(token_id)
+                    #get reward bid and ask spread
+                    reward_ob_data = get_reward_ob_data(market_info,ob_data)
+
+                    bids = reward_ob_data['bids']                
+                    #7. reward bid liquidity > X amount
+                    bid_liquidity_trigger = False
+                    total_bid_liquidity = sum(
+                                float(b['price']) * float(b['size'])
+                                for b in bids
+                                if b['price'] not in [None, "null", "None"] and b['size'] not in [None, "null", "None"]
+                                        )
+                    if total_bid_liquidity > bid_liquidity_threshold:
+                        bid_liquidity_trigger = True
+
+                    #8. volatility? price history do not fluctate more than 0.003 over 24h period of time
+                    volitility_trigger = False
+                    df_prices = get_price_history(token_id, start_time)
+                    if df_prices is not None and not df_prices.empty:
+                        volitility = calculate_volatility(df_prices)
+                        print(f"Volatility for token {token_id}: {volitility:.6f}")
+                        if volitility <= volitility_threshold:
+                            volitility_trigger = True
+                    else:
+                        print("No price data available")
+
+                    if bid_liquidity_trigger and volitility_trigger:
+                        message = f"{question} -- {outcome} is a good market to MM {market_info['outcomes']} {market_info['prices']} with rewards {market_info['reward_amt']}"
+        except Exception as e:
+            print(e)       
+        #conditions to choose markets
         #1. high liqudiity
-        total_liquidity = market_info['liquidity']
-        if total_liquidity > liquidity_threshold:
-            liquidity_trigger = True
-
+        #2. spread not more than x
+        #3. yes/no skew
         #4. volume?
-        volume_trigger = False
-        volume = market_info['volume']
-        if volume > vol_threshold:
-            volume_trigger = True
-
+        #5. outcome yes/no only
         #6. reward > X amount
-        reward_trigger = False
-        reward_amt = market_info['reward_amt']
-        if reward_amt > reward_threshold:
-            reward_trigger = True
-
-        if spread_trigger and skew_trigger and liquidity_trigger and volume_trigger and reward_trigger:
-
-            print("check for each token id")
-
-            for token_id in token_ids:
-                index = token_ids.index(token_id)
-                outcome = outcomes[index]
-
-                ob_data = get_orderbook_data(token_id)
-                #get reward bid and ask spread
-                reward_ob_data = get_reward_ob_data(market_info,ob_data)
-
-                bids = reward_ob_data['bids']                
-                #7. reward bid liquidity > X amount
-                bid_liquidity_trigger = False
-                total_bid_liquidity = sum(
-                            float(b['price']) * float(b['size'])
-                            for b in bids
-                            if b['price'] not in [None, "null", "None"] and b['size'] not in [None, "null", "None"]
-                                    )
-                if total_bid_liquidity > bid_liquidity_threshold:
-                    bid_liquidity_trigger = True
-
-                #8. volatility? price history do not fluctate more than 0.003 over 24h period of time
-                volitility_trigger = False
-                df_prices = get_price_history(token_id, start_time)
-                if df_prices is not None and not df_prices.empty:
-                    volitility = calculate_volatility(df_prices)
-                    print(f"Volatility for token {token_id}: {volitility:.6f}")
-                    if volitility <= volitility_threshold:
-                        volitility_trigger = True
-                else:
-                    print("No price data available")
-
-                if bid_liquidity_trigger and volitility_trigger:
-                    message = f"{question} -- {outcome} is a good market to MM {market_info['outcomes']} {market_info['prices']} with rewards {market_info['reward_amt']}"
-                        
-    #conditions to choose markets
-    #1. high liqudiity
-    #2. spread not more than x
-    #3. yes/no skew
-    #4. volume?
-    #5. outcome yes/no only
-    #6. reward > X amount
-    #7. reward bid liquidity > X amount
-    #8. volatility? price history do not fluctate more than X over X period of time
+        #7. reward bid liquidity > X amount
+        #8. volatility? price history do not fluctate more than X over X period of time
 
 except Exception as e:
     print(e)
