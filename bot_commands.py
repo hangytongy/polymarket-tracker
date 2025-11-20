@@ -153,22 +153,19 @@ def bot_get_reward_details():
     else:
         return None
 
-def get_market_info(market_id):
+def get_market_info(market_id : int):
     url = f"https://gamma-api.polymarket.com/markets/{market_id}"
 
     response = requests.get(url)
 
     if response.status_code == 200:
         data = response.json()
-        token_ids = data['clobTokenIds']
-        token_ids = json.loads(token_ids)
+        token_ids = json.loads(data['clobTokenIds'])
 
-        outcomes = data['outcomes']
-        outcomes = json.load(outcomes)
+        outcomes = json.loads(data['outcomes'])
 
-        prices = data['outcomePrices']
-        prices = json.load(prices)
-
+        prices = json.loads(data['outcomePrices'])
+        
         last_price = data['lastTradePrice'] if data['lastTradePrice'] else None
 
         question = data['question'] if data['question'] else None 
