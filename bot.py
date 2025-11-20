@@ -5,9 +5,9 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import os
 import dotenv
 dotenv.load_dotenv()
-from orders import *
-from utils import *
 import csv
+
+from bot_commands import *
 
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # Replace this
@@ -92,9 +92,7 @@ async def get_positions(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # --- /rewards command ---
 async def get_rewards(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
-        orders = get_all_orders()
-        orders = get_all_orders_id(orders)
-        rewards = get_rewards_scoring(orders)
+        rewards = bot_get_reward_details()
         if not rewards:
             await update.message.reply_text("unable to get orders.")
         else:
@@ -123,6 +121,36 @@ async def get_manual(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"🗑️ Manual market added:\n{question}")
     except Exception as e:
         await update.message.reply_text(f"❌ Error: {e}")
+
+# --- /info command ---
+async def get_market_info(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) < 1:
+        await update.message.reply_text("Usage: /info <market_id>")
+        return
+
+    market_id = " ".join(context.args[:])
+    try:
+        msg = bot_get_market_info(market_id)
+        await update.message.reply_text(f"{msg}")
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {e}")
+
+# --- /placeorder command ---
+async def place_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if len(context.args) < 5:
+        await update.message.reply_text("Usage: /placeorder <market_id> <outcome> <side> <price> <size>")
+        return
+    
+    market_id = context.args[0]
+    outcome = context.args[1]
+    side = context.args[2]
+    price = float(context.args[3])
+    size = float(context.args[4])
+    try:
+        result = bot_order(market_id, outcome, side, price, size)
+        await update.message.reply_text(f"✅ Order placed:\n{result}")
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {e}")
         
 # --- main ---
 async def main():
@@ -135,6 +163,8 @@ async def main():
     app.add_handler(CommandHandler("rewards", get_rewards))
     app.add_handler(CommandHandler("manual", get_manual))
     app.add_handler(CommandHandler("positions", get_positions))
+    app.add_handler(CommandHandler("info", get_market_info))
+    app.add_handler(CommandHandler("placeorder",place_order))
 
     print("🤖 Bot is running...")
     await app.run_polling()
