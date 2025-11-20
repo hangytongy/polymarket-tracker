@@ -15,7 +15,7 @@ def round_down(value, decimals):
 
 buy_in_size = 50 #not used anymore
 my_min_size = 100
-my_max_size = 800
+my_max_amt = int(os.getenv("MAX_AMT", "600"))
 my_min_amt = int(os.getenv("MIN_AMT", "100"))
 size_agression = float(os.getenv("SIZE_AGRESSION", "0.02")) #% of total bid rewards liquidity
 agression = float(os.getenv("AGRESSION", "0.5")) # 0.1-0.9
@@ -65,14 +65,15 @@ try:
             if token_id:
 
                 #check for current pos and if have, skip if set_no_buy_if_got_existingPos = True
-                assets = get_exisiting_positions()
+                assets, values = get_exisiting_positions()
                 #if there is a current position
                 if token_id in assets:
-                    #if you want to buy with current existing pos
-                    if set_buy_if_got_existingPos:
-                        pass
-                    else:
+                    index = assets.index(token_id)
+                    value = values[index]
+                    #if no "buy the dip" or position value is more than max amount
+                    if not set_buy_if_got_existingPos or value >= my_max_amt:
                         continue
+                
 
                 question = reward_data['question']
                 #get market orderbook

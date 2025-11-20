@@ -644,6 +644,7 @@ def get_token_id(market_id):
     
 def get_exisiting_positions():
     assets = []
+    values = []
     FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
 
     positions_url = f"https://data-api.polymarket.com/positions?user={FUNDER}"
@@ -657,4 +658,6 @@ def get_exisiting_positions():
             for position in positions:
                 asset = position['asset']
                 assets.append(asset)
-    return assets
+                value = position['initialValue']
+                values.append(value)
+    return assets, values
