@@ -218,10 +218,11 @@ def bot_get_market_info(market_id):
 
             msg += f"*Token {token_id}* ({outcome}):\n"
 
-            # Asks: take the lowest `max_rows` prices
+            # Asks: take the lowest `max_rows` prices and reverse for display
             if ob.get('asks'):
-                lowest_asks = sorted(ob['asks'], key=lambda x: x['price'], reverse = True)[:max_rows]
-                msg += "  Asks (lowest):\n"
+                lowest_asks = sorted(ob['asks'], key=lambda x: x['price'])[:max_rows]
+                lowest_asks.reverse()  # lowest price at the bottom
+                msg += "  Asks (lowest → top at bottom):\n"
                 for ask in lowest_asks:
                     price = ask['price']
                     size = ask['size']
@@ -239,6 +240,7 @@ def bot_get_market_info(market_id):
             msg += "\n"
 
         return msg
+
 
 
     
