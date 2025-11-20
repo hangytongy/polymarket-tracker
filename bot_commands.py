@@ -220,7 +220,7 @@ def bot_get_market_info(market_id):
 
             # Asks: take the lowest `max_rows` prices
             if ob.get('asks'):
-                lowest_asks = sorted(ob['asks'], key=lambda x: x['price'])[:max_rows]
+                lowest_asks = sorted(ob['asks'], key=lambda x: x['price'], reverse = True)[:max_rows]
                 msg += "  Asks (lowest):\n"
                 for ask in lowest_asks:
                     price = ask['price']
