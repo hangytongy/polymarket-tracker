@@ -182,7 +182,6 @@ try:
 
     start_time = int(time.time() - 24*3600) * 1000
 
-    print("check each rewards")
     for reward in all_rewards:
         market_id = reward['market_id']
         question = reward['question']
@@ -194,11 +193,11 @@ try:
         reward_min_size = reward['reward_min_size']
         competitiveness = reward['competitiveness']
 
+        print(f"-----{market_id}-----")
+
         market_info = get_market_info(market_id)
 
-        print("get conditions")
 
-        print("spread")
         #2. spread not more than x
         spread = market_info['spread']
         tick = market_info['tick_size']
@@ -211,7 +210,6 @@ try:
             if spread <= 2*tick:
                 spread_trigger = True
 
-        print("skew")
         skew_trigger = False
         #5. outcome yes/no only
         outcomes = market_info['outcomes']
@@ -226,28 +224,24 @@ try:
             if skew_yes > yes_skew_threshold or skew_yes < no_skew_threshold:
                 skew_trigger = True
             
-        print("liquidity")
         liquidity_trigger = False
         #1. high liqudiity
         total_liquidity = market_info['liquidity']
         if total_liquidity > liquidity_threshold:
             liquidity_trigger = True
 
-        print("volume")
         #4. volume?
         volume_trigger = False
         volume = market_info['volume']
         if volume > vol_threshold:
             volume_trigger = True
 
-        print("reward")
         #6. reward > X amount
         reward_trigger = False
         reward_amt = market_info['reward_amt']
         if reward_amt > reward_threshold:
             reward_trigger = True
 
-        print("check conditions")
         if spread_trigger and skew_trigger and liquidity_trigger and volume_trigger and reward_trigger:
 
             print("check for each token id")
@@ -265,7 +259,11 @@ try:
                 
                 #7. reward bid liquidity > X amount
                 bid_liquidity_trigger = False
-                total_bid_liquidity = sum(float(bid['price']) * float(bid['size']) for bid in bids)
+                total_bid_liquidity = sum(
+                            float(b['price']) * float(b['size'])
+                            for b in bids
+                            if b['price'] not in [None, "null", "None"] and b['size'] not in [None, "null", "None"]
+                                    )
                 if total_bid_liquidity > bid_liquidity_threshold:
                     bid_liquidity_trigger = True
 
