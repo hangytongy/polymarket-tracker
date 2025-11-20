@@ -51,7 +51,8 @@ if response.status_code == 200:
 
             if price < avg_price and SET_NEVER_BELOW_COST:
                 print("skip, price is lower than avg price")
-                continue
+                price = avg_price
+            
 
             sell_count = 0
 
