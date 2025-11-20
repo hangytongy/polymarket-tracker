@@ -173,16 +173,16 @@ use_async = os.getenv("USE_ASYNC", "0") == "1"
 MARKETS_DIR = os.getenv('MARKETS_DIR')
 
 try:
+    print("get all rewards")
     #if use async to run, also need to change in add_markets.py
     if use_async:
         all_rewards = asyncio.run(async_get_rewards())
     else:
         all_rewards = get_all_rewards()
 
-    print(all_rewards)
-
     start_time = int(time.time() - 24*3600) * 1000
 
+    print("check each rewards")
     for reward in all_rewards:
         market_id = reward['market_id']
         question = reward['question']
@@ -195,6 +195,8 @@ try:
         competitiveness = reward['competitiveness']
 
         market_info = get_market_info(market_id)
+
+        print("get conditions")
 
         #2. spread not more than x
         spread = market_info['spread']
