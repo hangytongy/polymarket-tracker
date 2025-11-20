@@ -198,6 +198,7 @@ try:
 
         print("get conditions")
 
+        print("spread")
         #2. spread not more than x
         spread = market_info['spread']
         tick = market_info['tick_size']
@@ -210,6 +211,7 @@ try:
             if spread <= 2*tick:
                 spread_trigger = True
 
+        print("skew")
         skew_trigger = False
         #5. outcome yes/no only
         outcomes = market_info['outcomes']
@@ -220,18 +222,21 @@ try:
             if skew_yes > yes_skew_threshold or skew_yes < no_skew_threshold:
                 skew_trigger = True
             
+        print("liquidity")
         liquidity_trigger = False
         #1. high liqudiity
         total_liquidity = market_info['liquidity']
         if total_liquidity > liquidity_threshold:
             liquidity_trigger = True
 
+        print("volume")
         #4. volume?
         volume_trigger = False
         volume = market_info['volume']
         if volume > vol_threshold:
             volume_trigger = True
 
+        print("reward")
         #6. reward > X amount
         reward_trigger = False
         reward_amt = market_info['reward_amt']
