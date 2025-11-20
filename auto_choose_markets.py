@@ -30,6 +30,7 @@ def get_price_history(token_id, start_time):
 
     # convert to DataFrame
     df = pd.DataFrame(data)
+    print(df)
     df['price'] = df['price'].astype(float)
     df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
     
@@ -254,9 +255,7 @@ try:
                 #get reward bid and ask spread
                 reward_ob_data = get_reward_ob_data(market_info,ob_data)
 
-                bids = reward_ob_data['bids']
-                print(bids)
-                
+                bids = reward_ob_data['bids']                
                 #7. reward bid liquidity > X amount
                 bid_liquidity_trigger = False
                 total_bid_liquidity = sum(
@@ -266,7 +265,7 @@ try:
                                     )
                 if total_bid_liquidity > bid_liquidity_threshold:
                     bid_liquidity_trigger = True
-                print('volatility')
+
                 #8. volatility? price history do not fluctate more than 0.003 over 24h period of time
                 volitility_trigger = False
                 df_prices = get_price_history(token_id, start_time)
