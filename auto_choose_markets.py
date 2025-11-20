@@ -31,8 +31,8 @@ def get_price_history(token_id, start_time):
     # convert to DataFrame
     df = pd.DataFrame(data)
     print(df)
-    df['price'] = df['price'].astype(float)
-    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+    df['price'] = df['p'].astype(float)
+    df['timestamp'] = pd.to_datetime(df['t'], unit='s')
     
     return df
 
