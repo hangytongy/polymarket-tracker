@@ -266,7 +266,7 @@ try:
                                     )
                 if total_bid_liquidity > bid_liquidity_threshold:
                     bid_liquidity_trigger = True
-
+                print('volatility')
                 #8. volatility? price history do not fluctate more than 0.003 over 24h period of time
                 volitility_trigger = False
                 df_prices = get_price_history(token_id, start_time)
