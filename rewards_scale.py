@@ -186,7 +186,7 @@ try:
                             resp = place_order_scale(token_id, bid_price, reward_bid_min , size, tick, min_size)
                             if resp:
                                 print(f"placed order at {bid_price} for {question} and {side}")
-                                message = f"{resp} \n\nOrder out of reward range, cancel old price {order['price']} and placed order at {bid_price} to {reward_bid_min} for {question} and {side} and size {size}"
+                                message = f"{str(resp)} \n\nOrder out of reward range, cancel old price {order['price']} and placed order at {bid_price} to {reward_bid_min} for {question} and {side} and size {size}"
                                 send_telegram_message(message)
                             else:
                                 message = f"Error placing scale order -> either steps is 0 or size per order less than reward size"
@@ -203,7 +203,7 @@ try:
                         resp = place_order_scale(token_id, bid_price, reward_bid_min , size, tick, min_size)
                         if resp:
                             print(f"placed order at {bid_price} for {question} and {side}")
-                            message = f"{resp} \n\nOrder out of reward range, cancel old price {order['price']} and placed order at {bid_price} to {reward_bid_min} for {question} and {side} and size {size}"
+                            message = f"{str(resp)} \n\nOrder out of reward range, cancel old price {order['price']} and placed order at {bid_price} to {reward_bid_min} for {question} and {side} and size {size}"
                             send_telegram_message(message)
                         else:
                             message = f"Error placing scale order -> either steps is 0 or size per order less than reward size"
@@ -219,7 +219,7 @@ try:
                     resp = place_order_scale(token_id, bid_price, reward_bid_min , size, tick, min_size)
                     if resp:
                         print(f"placed order at {bid_price} for {question} and {side}")
-                        message = f"{resp} \n\nOrder out of reward range, cancel old price {order['price']} and placed order at {bid_price} to {reward_bid_min} for {question} and {side} and size {size}"
+                        message = f"{str(resp)} \n\nOrder out of reward range, cancel old price {order['price']} and placed order at {bid_price} to {reward_bid_min} for {question} and {side} and size {size}"
                         send_telegram_message(message)
                     else:
                         message = f"Error placing scale order -> either steps is 0 or size per order less than reward size"
