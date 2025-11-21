@@ -1,9 +1,7 @@
 from py_clob_client.client import ClobClient
 from py_clob_client.clob_types import OrderArgs, OrderType
 from py_clob_client.order_builder.constants import BUY, SELL
-from py_clob_client.clob_types import OpenOrderParams
-from py_clob_client.clob_types import OrdersScoringParams
-from py_clob_client.clob_types import TradeParams
+from py_clob_client.clob_types import OpenOrderParams, OrderArgs, OrderType, PostOrdersArgs, OrdersScoringParams, TradeParams
 import os
 import dotenv
 
@@ -45,6 +43,46 @@ def place_order(token_id, price, size):
     resp = client.post_order(signed_order, OrderType.GTC)  # Good-Till-Cancelled
     print("Order placed:", resp)
 
+def place_order_scale(token_id, start_price, reward_bid_min, size, tick_size, min_reward_size):
+
+    steps = int((start_price - reward_bid_min) / tick_size) + 1
+
+    if steps <= 0:
+        print("Error: reward_bid_min must be lower than start_price")
+        return None
+
+    size_per_order = size / steps
+
+    if size_per_order < min_reward_size:
+        print("size lower than min reward size")
+        return None
+
+    # Generate descending prices based on tick size
+    prices = [start_price - i * tick_size for i in range(steps)]
+
+    # Round to nearest tick increment (safety)
+    prices = [round(p / tick_size) * tick_size for p in prices]
+
+    # Build batch order list
+    batch_orders = []
+
+    for p in prices:
+        batch_orders.append(
+            PostOrdersArgs(
+                order=client.create_order(OrderArgs(
+                    price=p,
+                    size=size_per_order,
+                    side=BUY,
+                    token_id=token_id,
+                )),
+                orderType=OrderType.GTC
+            )
+        )
+
+    resp = client.post_orders(batch_orders)
+    print("Order placed:", resp)
+    return f"Order placed: {resp}"
+
 def place_sell_order(token_id, price, size):
     print(f"Placing SELL order for {token_id} at {price} with size {size}")
     
@@ -66,6 +104,9 @@ def cancel_order(order_id):
     resp     = client.cancel(order_id)
     print("Cancel response:", resp)
 
+def cancel_order_by_asset(token_id):
+    resp = client.cancel_market_orders(asset_id=token_id)
+    print("Cancel response:", resp)
 
 def get_trades():
     trades = client.get_trades(
