@@ -140,6 +140,8 @@ try:
                 amt = size * reward_mid_range
                 if amt < my_min_amt:
                     size = round(my_min_amt / reward_mid_range,1)
+                elif amt > my_max_amt:
+                    size = round(my_max_amt / reward_mid_range,1)
                 else:
                     size = size
 

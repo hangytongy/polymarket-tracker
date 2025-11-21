@@ -31,6 +31,7 @@ if response.status_code == 200:
             event_slug = position['eventSlug']
             asset = position['asset']
             cond_id = position['conditionId']
+            market_id = position['eventId']
             total_size = float(position['size'])
             question = position['title']
             avg_price = position['avgPrice']
@@ -39,6 +40,14 @@ if response.status_code == 200:
             if question.lower() in manual_sells_q:
                 print("skip this question")
                 continue
+
+            #get tick size
+            url = f"https://gamma-api.polymarket.com/markets/{market_id}"
+
+            response = requests.get(url)
+            data = response.json()
+            tick = data['orderPriceMinTickSize']
+            decimal_places = len(str(tick).split(".")[1]) if "." in str(tick) else 0
 
             #get order book price
             ob = get_orderbook_data(asset)
@@ -51,7 +60,7 @@ if response.status_code == 200:
 
             if price < avg_price and SET_NEVER_BELOW_COST:
                 print("skip, price is lower than avg price")
-                price = avg_price
+                price = round(avg_price,decimal_places)
             
 
             sell_count = 0
