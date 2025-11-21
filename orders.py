@@ -107,6 +107,7 @@ def cancel_order(order_id):
 def cancel_order_by_asset(token_id):
     resp = client.cancel_market_orders(asset_id=token_id)
     print("Cancel response:", resp)
+    return resp
 
 def get_trades():
     trades = client.get_trades(

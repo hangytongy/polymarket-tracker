@@ -176,7 +176,7 @@ try:
                                 print(f'Current order is in the reward bid range')
                         else:
                             print(f'Current order is not in the reward bid range')
-                            cancel_order_by_asset(token_id)
+                            cancel_resp = cancel_order_by_asset(token_id)
 
                             if wallet_balance < size * reward_mid_range :
                                 message = f"not enough $ for {question}"
