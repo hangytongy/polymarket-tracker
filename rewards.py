@@ -157,7 +157,7 @@ try:
                         if order['side'] == 'BUY':
                             total_buys += 1
                             #if market too volatile
-                            if reward_mid_range - float(order['price']) > VOLATILITY_THRESHOLD:
+                            if abs(reward_mid_range - float(order['price'])) > VOLATILITY_THRESHOLD:
                                 message = f"volatility to high for {question}"
                                 send_telegram_message(message)
                                 continue
