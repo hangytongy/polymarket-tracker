@@ -295,7 +295,8 @@ def bot_get_market_info(market_id):
     
 
 def bot_order(market_id, outcome, side, price, size):
-
+    price = float(price)
+    size = float(size)
     try:
 
         market_info = get_market_info(market_id)
@@ -307,6 +308,7 @@ def bot_order(market_id, outcome, side, price, size):
             market_outcome = outcomes[i]
 
             if market_outcome.lower() == outcome.lower():
+                print(f"market found {market_token_id} {market_outcome} {price} {size}")
                 token_id = market_token_id
 
                 if side.lower() == 'buy':

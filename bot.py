@@ -8,7 +8,7 @@ dotenv.load_dotenv()
 import csv
 
 from bot_commands import *
-
+from utils import get_wallet_balance
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # Replace this
 
@@ -148,6 +148,14 @@ async def place_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ Error: {e}")
 
+async def get_balance(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        balance = get_wallet_balance()
+        msg = f"Wallet Balance : {balance}"
+        await update.message.reply_text(f"✅ {msg}")
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {e}")
+
 async def send_long_message(chat, text, chunk_size=4000):
     for i in range(0, len(text), chunk_size):
         await chat.send_message(text[i:i+chunk_size])
@@ -165,6 +173,7 @@ async def main():
     app.add_handler(CommandHandler("positions", get_positions))
     app.add_handler(CommandHandler("info", get_market_info))
     app.add_handler(CommandHandler("placeorder",place_order))
+    app.add_handler(CommandHandler("balance",get_balance))
 
     print("🤖 Bot is running...")
     await app.run_polling()
