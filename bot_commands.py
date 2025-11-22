@@ -59,32 +59,41 @@ def bot_get_all_orders_info():
 
         # === STEP 3: Continue with your logic ===
         all_data = []
-        for _, row in df.iterrows():
-            market_id = str(row['market_id'])
-            side = str(row['side'])
 
-            try:
+        # Build mapping: token_id -> (reward, index)
+        reward_map = {}
 
-                reward_data, token_id = get_wanted_rewards_market(all_rewards,market_id,side)
+        for reward in all_rewards:
+            for idx, tok in enumerate(reward['tokens_id']):
+                reward_map[tok] = (reward, idx)
 
-                if token_id:
+        for order in all_orders:
+            order_token_id = order['asset_id']
 
-                    #check for current pos and if have, skip if set_no_buy_if_got_existingPos = True
-                    for order in all_orders:
-                        if token_id == order['asset_id']:
-                            d = {
-                            'question' : reward_data['question'],
-                            'outcome' : order['outcome'],
-                            'side' : order['side'],
-                            'size' : order['original_size'],
-                            'price' : order['price'],
-                            'size matched' : order['size_matched']  
-                            }
-                            all_data.append(d)
+            if order_token_id not in reward_map:
+                continue
 
-            except Exception as e:
-                print(f"{e} : error getting assets data")
-                return None
+            reward, index = reward_map[order_token_id]
+
+            token_id = order_token_id
+            outcome = reward['outcomes'][index]
+            question = reward['question']
+            market_id = reward['market_id']
+            side = order['side']
+            size = order['original_size']
+            price = order['price']
+            size_matched = order['size_matched']
+
+            d = {
+            'question' : question,
+            'outcome' : outcome,
+            'side' : side,
+            'size' : size,
+            'price' : price,
+            'size matched' : size_matched
+               }
+            all_data.append(d)
+
         if all_data:
             message = format_orders(all_data)
             return message
