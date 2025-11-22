@@ -25,6 +25,7 @@ def bot_get_all_orders_info():
         for item in all_data:
             lines.append(
                 f"🟦 {item['question']}\n"
+                f"• Order id: {item['order id']}\n"
                 f"• Outcome: {item['outcome']}\n"
                 f"• Side: {item['side']}\n"
                 f"• Size: {item['size']}\n"
@@ -76,6 +77,7 @@ def bot_get_all_orders_info():
             reward, index = reward_map[order_token_id]
 
             token_id = order_token_id
+            order_id = order['id']
             outcome = reward['outcomes'][index]
             question = reward['question']
             market_id = reward['market_id']
@@ -85,6 +87,7 @@ def bot_get_all_orders_info():
             size_matched = order['size_matched']
 
             d = {
+            'order id' : order_id,
             'question' : question,
             'outcome' : outcome,
             'side' : side,
