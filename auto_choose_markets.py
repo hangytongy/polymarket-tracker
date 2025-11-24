@@ -267,6 +267,7 @@ try:
                                 for b in bids
                                 if b['price'] not in [None, "null", "None"] and b['size'] not in [None, "null", "None"]
                                         )
+                    print(f"total bid liq : {total_bid_liquidity}")
                     if total_bid_liquidity > bid_liquidity_threshold:
                         bid_liquidity_trigger = True
                         break
@@ -285,8 +286,8 @@ try:
                     else:
                         print("No price data available")
 
-                    if bid_liquidity_trigger and volitility_trigger:
-                        message = f"{question} -- {outcome} is a good market to MM {market_info['outcomes']} {market_info['prices']} with rewards {market_info['reward_amt']}"
+                if bid_liquidity_trigger and volitility_trigger:
+                    message = f"{question} -- {outcome} is a good market to MM {market_info['outcomes']} {market_info['prices']} with rewards {market_info['reward_amt']}"
         except Exception as e:
             print(e)       
         #conditions to choose markets
