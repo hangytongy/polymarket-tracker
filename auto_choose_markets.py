@@ -309,6 +309,10 @@ def auto_select_markets():
 
             except Exception as e:
                 print(e)
-        return potential_markets       
+        if potential_markets:
+            message = "\n".join(str(x) for x in potential_markets)
+            return message    
+        else:
+            return "No potential markets" 
     except Exception as e:
         print(e)
