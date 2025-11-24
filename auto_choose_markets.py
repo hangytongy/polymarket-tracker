@@ -184,8 +184,7 @@ try:
     else:
         all_rewards = get_all_rewards()
 
-    start_time = int(time.time() - 24*3600) * 1000
-
+    start_time = int(time.time() - 48*3600)
     for reward in all_rewards:
         try:
             market_id = reward['market_id']
@@ -218,7 +217,7 @@ try:
             skew_trigger = False
             #5. outcome yes/no only
             outcomes = market_info['outcomes']
-            if [o.lower() for o in outcomes] == ['yes', 'no']:
+            if [o.lower() for o in outcomes] == ['yes', 'no'] or [o.lower() for o in outcomes] == ['no', 'yes']:
             #3. yes/no skew
                 yes_no_price = market_info['prices']
                 yes_price = float(yes_no_price[0])
