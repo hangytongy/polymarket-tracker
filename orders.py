@@ -50,6 +50,10 @@ def place_order_scale(token_id, start_price, reward_bid_min, size, tick_size, mi
     if steps <= 0:
         print("Error: reward_bid_min must be lower than start_price")
         return None
+    
+    if steps > 5:
+        print("steps more than 5, reduce back to 5")
+        steps = 5
 
     size_per_order = size / steps
 
