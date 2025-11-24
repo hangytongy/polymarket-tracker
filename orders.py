@@ -70,24 +70,38 @@ def place_order_scale(token_id, start_price, reward_bid_min, size, tick_size, mi
     # Round for safety
     prices = [round(p / tick_size) * tick_size for p in prices]
 
-    prices = [max(p, MIN_SCALE_AMT) for p in prices]
-
     # Recompute sizing per order
     size_per_order = size / steps
 
-    if size_per_order < min_reward_size:
+    #get new sizes baded on min amount per order
+    values = [price * size_per_order for price in prices]
+
+    new_values = [max(v,MIN_SCALE_AMT) for v in values]
+
+    # Compute NEW sizes to match new_values
+    new_sizes = []
+    for price, val in zip(prices, new_values):
+        if price <= 0:
+            new_sizes.append(0)
+        else:
+            new_sizes.append(val / price)
+
+    new_sizes = [max(s,size_per_order) for s in new_sizes]
+
+    # Check min reward size
+    if min(new_sizes) < min_reward_size:
         print("size lower than min reward size")
         return None
 
     # Build batch order list
     batch_orders = []
 
-    for p in prices:
+    for price, size_out in zip(prices,new_sizes):
         batch_orders.append(
             PostOrdersArgs(
                 order=client.create_order(OrderArgs(
-                    price=p,
-                    size=size_per_order,
+                    price=price,
+                    size=size_out,
                     side=BUY,
                     token_id=token_id,
                 )),
