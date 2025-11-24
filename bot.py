@@ -10,6 +10,7 @@ import csv
 from bot_commands import *
 from utils import get_wallet_balance
 from orders import cancel_order
+from auto_choose_markets import auto_select_markets
 
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")  # Replace this
 
@@ -170,6 +171,20 @@ async def bot_cancel_order(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ Error: {e}")
 
+# --- /auto_select command ---
+async def auto_select(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    try:
+        markets = auto_select_markets()
+        if not markets:
+            await update.message.reply_text("unable to get orders.")
+        else:
+            msg = str(markets)
+            #await update.message.reply_text(f"📊 Current Orders:\n\n{msg[:4000]}")
+            await send_long_message(update.message.chat, msg)
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error getting orders: {e}")
+
+
 async def send_long_message(chat, text, chunk_size=4000):
     for i in range(0, len(text), chunk_size):
         await chat.send_message(text[i:i+chunk_size])
@@ -189,6 +204,7 @@ async def main():
     app.add_handler(CommandHandler("placeorder",place_order))
     app.add_handler(CommandHandler("balance",get_balance))
     app.add_handler(CommandHandler("cancel",bot_cancel_order))
+    app.add_handler(CommandHandler("autoselect",auto_select))
 
     print("🤖 Bot is running...")
     await app.run_polling()
