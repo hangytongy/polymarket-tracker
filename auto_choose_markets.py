@@ -168,6 +168,7 @@ def get_wanted_rewards_market(all_rewards,market_id : str, side : str):
 liquidity_threshold = 50000
 bid_liquidity_threshold = 10000
 vol_threshold = 100000
+tick_spread = 3
 yes_skew_threshold = 85/15
 no_skew_threshold = 15/85
 reward_threshold = 20
@@ -211,7 +212,7 @@ try:
                 if spread <= 0.01:
                     spread_trigger = True
             else:
-                if spread <= 2*tick:
+                if spread <= tick* tick_spread:
                     spread_trigger = True
 
             skew_trigger = False
