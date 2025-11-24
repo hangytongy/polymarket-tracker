@@ -250,6 +250,7 @@ try:
 
                 print("check for each token id")
 
+                bid_liquidity_trigger = False
                 for token_id in token_ids:
                     index = token_ids.index(token_id)
                     outcome = outcomes[index]
@@ -260,7 +261,7 @@ try:
 
                     bids = reward_ob_data['bids']                
                     #7. reward bid liquidity > X amount
-                    bid_liquidity_trigger = False
+                    
                     total_bid_liquidity = sum(
                                 float(b['price']) * float(b['size'])
                                 for b in bids
@@ -268,15 +269,19 @@ try:
                                         )
                     if total_bid_liquidity > bid_liquidity_threshold:
                         bid_liquidity_trigger = True
-
+                        break
+                
+                volitility_trigger = False
+                for token_id in token_ids:
                     #8. volatility? price history do not fluctate more than 0.003 over 24h period of time
-                    volitility_trigger = False
+                    
                     df_prices = get_price_history(token_id, start_time)
                     if df_prices is not None and not df_prices.empty:
                         volitility = calculate_volatility(df_prices)
                         print(f"Volatility for token {token_id}: {volitility:.6f}")
                         if volitility <= volitility_threshold:
                             volitility_trigger = True
+                            break
                     else:
                         print("No price data available")
 
