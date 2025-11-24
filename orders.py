@@ -88,7 +88,8 @@ def place_order_scale(token_id, start_price, reward_bid_min, size, tick_size, mi
 
     new_sizes = [max(s,size_per_order) for s in new_sizes]
 
-    print(f"sizes : {new_sizes} \n\n prices : {prices}")
+    print(f"sizes : {new_sizes} \n prices : {prices}")
+    print(f"min size : {min_reward_size}")
 
     # Check min reward size
     if min(new_sizes) < min_reward_size:
