@@ -93,8 +93,7 @@ def place_order_scale(token_id, start_price, reward_bid_min, size, tick_size, mi
 
     # Check min reward size
     if min(new_sizes) < min_reward_size:
-        print("size lower than min reward size")
-        return None
+        new_sizes = [max(s,min_reward_size) for s in new_sizes]
 
     # Build batch order list
     batch_orders = []
