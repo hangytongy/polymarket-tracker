@@ -246,48 +246,63 @@ try:
             if reward_amt > reward_threshold:
                 reward_trigger = True
 
-            if spread_trigger and skew_trigger and liquidity_trigger and volume_trigger and reward_trigger:
+            if all([spread_trigger, skew_trigger, liquidity_trigger, volume_trigger, reward_trigger]):
 
                 print("check for each token id")
 
+                # ---- 7. BID LIQUIDITY CHECK ----
                 bid_liquidity_trigger = False
+                
                 for token_id in token_ids:
-                    index = token_ids.index(token_id)
-                    outcome = outcomes[index]
 
                     ob_data = get_orderbook_data(token_id)
-                    #get reward bid and ask spread
-                    reward_ob_data = get_reward_ob_data(market_info,ob_data)
+                    reward_ob_data = get_reward_ob_data(market_info, ob_data)
 
-                    bids = reward_ob_data['bids']                
-                    #7. reward bid liquidity > X amount
-                    
+                    bids = reward_ob_data.get("bids", [])
+
+                    # compute liquidity safely
                     total_bid_liquidity = sum(
-                                float(b['price']) * float(b['size'])
-                                for b in bids
-                                if b['price'] not in [None, "null", "None"] and b['size'] not in [None, "null", "None"]
-                                        )
-                    print(f"total bid liq : {total_bid_liquidity}")
+                        float(b.get("price", 0) or 0) * float(b.get("size", 0) or 0)
+                        for b in bids
+                        if b.get("price") not in [None, "null", "None"] and 
+                        b.get("size") not in [None, "null", "None"]
+                    )
+
+                    print(f"total bid liq for {token_id}: {total_bid_liquidity}")
+
                     if total_bid_liquidity > bid_liquidity_threshold:
                         bid_liquidity_trigger = True
                         break
-                
-                volitility_trigger = False
-                for token_id in token_ids:
-                    #8. volatility? price history do not fluctate more than 0.003 over 24h period of time
-                    
-                    df_prices = get_price_history(token_id, start_time)
-                    if df_prices is not None and not df_prices.empty:
-                        volitility = calculate_volatility(df_prices)
-                        print(f"Volatility for token {token_id}: {volitility:.6f}")
-                        if volitility <= volitility_threshold:
-                            volitility_trigger = True
-                            break
-                    else:
-                        print("No price data available")
 
-                if bid_liquidity_trigger and volitility_trigger:
-                    message = f"{question} -- {outcome} is a good market to MM {market_info['outcomes']} {market_info['prices']} with rewards {market_info['reward_amt']}"
+
+                # ---- 8. VOLATILITY CHECK ----
+                volatility_trigger = False
+
+                for token_id in token_ids:
+
+                    df_prices = get_price_history(token_id, start_time)
+
+                    if df_prices is None or df_prices.empty:
+                        print(f"No price data for {token_id}")
+                        continue
+
+                    volatility = calculate_volatility(df_prices)
+                    print(f"Volatility for {token_id}: {volatility:.6f}")
+
+                    if volatility <= volitility_threshold:
+                        volatility_trigger = True
+                        break
+
+
+                # ---- FINAL CONDITION ----
+                if bid_liquidity_trigger and volatility_trigger:
+                    message = (
+                        f"{question} -- {market_info['outcomes']} "
+                        f"{market_info['prices']} is good to MM "
+                        f"with rewards {market_info['reward_amt']}"
+                    )
+                    print(message)
+
         except Exception as e:
             print(e)       
         #conditions to choose markets
