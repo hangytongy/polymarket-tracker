@@ -12,6 +12,8 @@ CHAIN_ID  = 137  # Polygon mainnet
 PRIVATE_KEY = os.getenv("POLY_PRIVATE_KEY")
 FUNDER      = os.getenv("POLY_FUNDER_ADDRESS")
 
+MIN_SCALE_AMT = int(os.getenv("MIN_SCALE_AMT","100"))
+
 client = ClobClient(
         HOST,
         key=PRIVATE_KEY,
@@ -67,6 +69,8 @@ def place_order_scale(token_id, start_price, reward_bid_min, size, tick_size, mi
 
     # Round for safety
     prices = [round(p / tick_size) * tick_size for p in prices]
+
+    prices = [max(p, MIN_SCALE_AMT) for p in prices]
 
     # Recompute sizing per order
     size_per_order = size / steps
