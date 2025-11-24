@@ -50,22 +50,30 @@ def place_order_scale(token_id, start_price, reward_bid_min, size, tick_size, mi
     if steps <= 0:
         print("Error: reward_bid_min must be lower than start_price")
         return None
-    
-    if steps > 5:
-        print("steps more than 5, reduce back to 5")
-        steps = 5
 
+    # If too many steps, reduce them and spread evenly
+    ORIGINAL_STEPS = steps
+    if steps > 5:
+        steps = max(2, steps // 2)  # prevent steps from becoming 1
+        print(f"Reducing steps from {ORIGINAL_STEPS} → {steps}")
+
+        # Spread prices evenly between start and min price
+        price_step = (start_price - reward_bid_min) / (steps - 1)
+        prices = [start_price - i * price_step for i in range(steps)]
+
+    else:
+        # normal tick-size based steps
+        prices = [start_price - i * tick_size for i in range(steps)]
+
+    # Round for safety
+    prices = [round(p / tick_size) * tick_size for p in prices]
+
+    # Recompute sizing per order
     size_per_order = size / steps
 
     if size_per_order < min_reward_size:
         print("size lower than min reward size")
         return None
-
-    # Generate descending prices based on tick size
-    prices = [start_price - i * tick_size for i in range(steps)]
-
-    # Round to nearest tick increment (safety)
-    prices = [round(p / tick_size) * tick_size for p in prices]
 
     # Build batch order list
     batch_orders = []
