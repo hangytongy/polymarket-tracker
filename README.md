@@ -48,6 +48,20 @@ $/orders $
 sell all current positions:
 $/positions $
 
+See all info of a current market:
+$/info <market_id>$
+
+Manual place order:
+$/placeorder <market_id> <outcome(yes/no)> <side(buy/sell)> <price> <size>
+
+Manual cancel order:
+$/cancel <order_id>$
+
+wallet balance: 
+$/balance$
+
+auto helps you find the least volatile markets to play:
+$/autoselect$
 ## Env variables
 
 ```
@@ -59,5 +73,17 @@ SIZE_AGRESSION=0.02 // % of the entire bid pool you want to size in, 0 - 1
 
 AGRESSION=0.5 // how high up the bid you want to be, 0 - 1
 
-MIN_AMT=100 // minimum bid size
+MIN_AMT=100 // minimum bid value
+
+MAX_AMT=600 // maximum bid value OR maximum position value
+
+VOLATILITY_THRESHOLD=0.03 // if spread more than X %, dont place new order
+
+MANUALSELL_DIR=data/manualsell.csv // dir to those markets you want to manual sell/buy
+
+MARKETS_DIR=data/markets.csv // dir to all your added markets
+
+SET_NEVER_BELOW_COST=1 // (1) limit sell never below cost price, (0) vise versa
+
+MIN_SCALE_AMT=100 // minimum bid value in scale orders
 ```
