@@ -192,7 +192,8 @@ def get_market_info(market_id : int):
 
         liq = data['liquidityNum'] if data['liquidityNum'] else None
 
-        reward_amt = data['clobRewards'][0]['rewardsDailyRate'] if data['clobRewards'][0]['rewardsDailyRate'] else None
+        #reward_amt = data['clobRewards'][0]['rewardsDailyRate'] if data['clobRewards'][0]['rewardsDailyRate'] else None
+        reward_amt = data.get('clobRewards', [{}])[0].get('rewardsDailyRate')
 
         reward_min_size = data['rewardsMinSize'] if data['rewardsMinSize'] else None
 
