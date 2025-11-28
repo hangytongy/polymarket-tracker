@@ -56,6 +56,8 @@ if response.status_code == 200:
                     #if hit stop loss
                     elif curr_price < avg_price * 0.8:
                         price = round(curr_price,decimal_places)
+                    else:
+                        price = sell_price
                 elif curr_price > sell_price:
                     price = curr_price
                 else:
