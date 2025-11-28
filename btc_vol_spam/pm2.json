@@ -4,7 +4,7 @@
         "name": "BTC_15min",
         "script": "venv/bin/python3",
         "args": "main.py",
-        "cwd": "/root/polymarket-tracker/btc_predict",
+        "cwd": "/root/polymarket-tracker/btc_vol_spam",
         "autorestart": true,
         "time": true
       },
@@ -12,7 +12,7 @@
         "name": "btc_limit_sell",
         "script": "venv/bin/python3",
         "args": "scheduler.py",
-        "cwd": "/root/polymarket-tracker/btc_predict",
+        "cwd": "/root/polymarket-tracker/btc_vol_spam",
         "autorestart": true,
         "time": true
       }
