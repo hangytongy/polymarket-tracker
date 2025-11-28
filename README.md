@@ -62,6 +62,7 @@ $/balance$
 
 auto helps you find the least volatile markets to play:
 $/autoselect$
+
 ## Env variables
 
 ```

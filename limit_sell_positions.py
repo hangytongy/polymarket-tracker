@@ -37,7 +37,7 @@ if response.status_code == 200:
             avg_price = position['avgPrice']
             print(f"{question} {asset} {total_size} - {avg_price}")
 
-            if question.lower() in manual_sells_q:
+            if question.lower() in manual_sells_q or "bitcoin up or down" in question.lower():
                 print("skip this question")
                 continue
 

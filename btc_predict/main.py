@@ -17,7 +17,7 @@ while True:
         print("yes, BTC will be higher")
         token_id = token_ids[0]
         
-    elif prob < 0.2 and conf >0.7:
+    elif prob < 0.1 and conf >0.7:
         print("no, BTC will be lower")
         token_id = token_ids[1]
         
@@ -29,6 +29,7 @@ while True:
         mid_price = get_mid_price(token_id)
         current_orders = get_current_orders(token_id)
         if current_orders:
+            print(current_orders)
             buy_orders = [order for order in current_orders if order['side'] == 'BUY']
             if not buy_orders:
                 if time_left > 1 and mid_price < 0.98 and mid_price > 0.03:
