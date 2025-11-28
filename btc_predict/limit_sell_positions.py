@@ -40,6 +40,7 @@ if response.status_code == 200:
             #get mid price
             url = f"https://clob.polymarket.com/midpoint?token_id={asset}"
             response = requests.get(url)
+            print(response.json())
             ori_price = response.json()['mid']
             print(f"price = {ori_price}")
 
