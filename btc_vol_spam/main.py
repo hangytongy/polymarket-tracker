@@ -11,8 +11,6 @@ while True:
     timestamp = get_timestamp() #only need to be done every 15min
 
     token_ids = get_btc_token_ids(timestamp) # need to check if this gets the correct market
-
-    prob, conf, time_left = get_probability()
         
     if token_ids:
 
@@ -33,12 +31,12 @@ while True:
                 if not buy_orders:
                     if mid_price > MAX_PRICE:
                         place_order(token_id, mid_price,size)
-                        message = f"placed order for BTC at {mid_price} with prob {prob}"
+                        message = f"placed order for BTC at {mid_price}"
                         send_telegram_message(message)
             else:
                 if mid_price > MAX_PRICE:
                     place_order(token_id, mid_price,size)
-                    message = f"placed order for BTC at {mid_price} with prob {prob}"
+                    message = f"placed order for BTC at {mid_price}"
                     send_telegram_message(message)
         
     time.sleep(15)
