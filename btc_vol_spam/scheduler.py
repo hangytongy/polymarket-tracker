@@ -29,4 +29,4 @@ while True:
     else:
         print("Skipping run — previous one still active.")
     
-    time.sleep(30)   # run every 30 seconds
+    time.sleep(15)   # run every 30 seconds

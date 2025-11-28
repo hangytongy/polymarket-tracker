@@ -4,7 +4,7 @@ from send_telegram_message import send_telegram_message
 import time
 
 size = 10
-MAX_PRICE = 0.95
+MAX_PRICE = 0.935
 
 while True:
 
@@ -29,20 +29,20 @@ while True:
                 print(current_orders)
                 buy_orders = [order for order in current_orders if order['side'] == 'BUY']
                 if not buy_orders:
-                    if mid_price > MAX_PRICE:
+                    if mid_price >= MAX_PRICE:
                         place_order(token_id, mid_price,size)
                         message = f"placed order for BTC at {mid_price}"
                         send_telegram_message(message)
                     else:
                         print(f"mid price {mid_price} not at {MAX_PRICE}")
             else:
-                if mid_price > MAX_PRICE:
+                if mid_price >= MAX_PRICE:
                     place_order(token_id, mid_price,size)
                     message = f"placed order for BTC at {mid_price}"
                     send_telegram_message(message)
                 else:
                     print(f"mid price {mid_price} not at {MAX_PRICE}")
         
-    time.sleep(15)
+    time.sleep(5)
 
 
