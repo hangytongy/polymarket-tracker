@@ -42,7 +42,7 @@ if response.status_code == 200:
                 url = f"https://clob.polymarket.com/midpoint?token_id={asset}"
                 response = requests.get(url)
                 print(response.json())
-                ori_price = response.json()['mid']
+                ori_price = float(response.json()['mid'])
                 print(f"price = {ori_price}")
 
                 #if >10% gains sell
@@ -75,12 +75,14 @@ if response.status_code == 200:
                                 cancel_order(order_id)
                                 place_sell_order(asset,price,total_size)
                                 message = f"Cancel old SELL ORDER for {question} at size {total_size} from {current_price} to {price}"
+                                print(message)
                                 send_telegram_message(message)
                 #if do not have existing sell orders for this market
                 if sell_count == 0:
                     print("add sell order")
                     place_sell_order(asset,price,total_size)
                     message = f"SELL ORDER for {question} at size {total_size} at price {price}"
+                    print(message)
                     send_telegram_message(message)
             except Exception as e:
                 print(f"error : {e}")
