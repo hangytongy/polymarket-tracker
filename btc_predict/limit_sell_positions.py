@@ -4,7 +4,7 @@ import requests
 from send_telegram_message import send_telegram_message
 import pandas as pd
 dotenv.load_dotenv()
-from utils import *
+from predict_utils import *
 
 SET_NEVER_BELOW_COST=os.getenv("SET_NEVER_BELOW_COST","1") == "1"
 
@@ -64,7 +64,7 @@ if response.status_code == 200:
 
                 if price < 0.01:
                     price = 0.01
-                    
+
                 if price > 0.99:
                     price = 0.99
 

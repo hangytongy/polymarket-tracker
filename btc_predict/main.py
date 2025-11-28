@@ -1,5 +1,5 @@
 from model import *
-from utils import *
+from predict_utils import *
 from send_telegram_message import send_telegram_message
 import time
 
