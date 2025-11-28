@@ -2,6 +2,7 @@ from binance.client import Client
 import requests
 import json
 from datetime import datetime, timedelta
+import pandas as pd
 
 # -------------------------------------------------------
 # 1. DOWNLOAD 7 DAYS OF BTC 1-MIN DATA FROM BINANCE
@@ -40,3 +41,13 @@ def get_timestamp():
     timestamp = int(rounded_dt.timestamp())
 
     return timestamp
+
+def get_time_left():
+
+    now = datetime.utcnow()
+    mins = now.minute
+    next_interval_min = (mins // 15 + 1) * 15
+    next_interval = now.replace(minute=0, second=0, microsecond=0) + pd.Timedelta(minutes=next_interval_min)
+    time_left = (next_interval - now).total_seconds() / 60.0
+
+    return time_left

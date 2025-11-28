@@ -6,7 +6,7 @@ import pandas as pd
 dotenv.load_dotenv()
 from spam_utils import *
 
-SET_NEVER_BELOW_COST=os.getenv("SET_NEVER_BELOW_COST","1") == "1"
+SET_NEVER_BELOW_COST=os.getenv("SET_NEVER_BELOW_COST","0") == "1"
 
 FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
 
