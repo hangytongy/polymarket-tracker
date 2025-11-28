@@ -39,7 +39,7 @@ if response.status_code == 200:
 
             #get mid price
 
-            ori_price = get_mid_price()
+            ori_price = get_mid_price(asset)
             print(f"price = {ori_price}")
 
             #if >10% gains sell
