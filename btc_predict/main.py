@@ -9,7 +9,7 @@ while True:
 
     timestamp = get_timestamp() #only need to be done every 15min
 
-    token_ids, market_id = get_btc_token_ids(timestamp) # need to check if this gets the correct market
+    token_ids = get_btc_token_ids(timestamp) # need to check if this gets the correct market
 
     prob, conf, time_left = get_probability()
 
@@ -26,8 +26,16 @@ while True:
         token_id = None
         
     if token_id:
+
+        #check for current pos and if have, skip if set_no_buy_if_got_existingPos = True
+        assets = get_exisiting_positions()
+        #if there is a current position
+        if token_id in assets:
+            print("already have exisitng positions no place order")
+            continue
+
         mid_price = get_mid_price(token_id)
-        current_orders = get_current_orders(market_id)
+        current_orders = get_current_orders(token_id)
         if current_orders:
             print(current_orders)
             buy_orders = [order for order in current_orders if order['side'] == 'BUY']

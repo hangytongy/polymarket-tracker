@@ -42,21 +42,25 @@ if response.status_code == 200:
                 url = f"https://clob.polymarket.com/midpoint?token_id={asset}"
                 response = requests.get(url)
                 print(response.json())
-                ori_price = float(response.json()['mid'])
-                print(f"price = {ori_price}")
+                curr_price = float(response.json()['mid'])
+                print(f"price = {curr_price}")
 
                 #if >10% gains sell
-                price = avg_price * 1.1
+                sell_price = avg_price * 1.1
 
                 #if prices now is lower than buy in price
-                if ori_price < avg_price:
+                if curr_price < avg_price:
                     #if dont want to lose a single cent
                     if SET_NEVER_BELOW_COST:
                         print("skip, price is lower than avg price")
                         price = round(avg_price,decimal_places)
                     #if hit stop loss
-                    elif ori_price < avg_price * 0.8:
-                        price = round(ori_price,decimal_places)            
+                    elif curr_price < avg_price * 0.8:
+                        price = round(curr_price,decimal_places)
+                elif curr_price > sell_price:
+                    price = curr_price
+                else:
+                    price = sell_price
 
                 sell_count = 0
 

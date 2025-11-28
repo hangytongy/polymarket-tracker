@@ -177,9 +177,8 @@ def get_btc_token_ids(timestamp):
     data = response.json()
 
     token_ids = json.loads(data['clobTokenIds'])
-    market_id = data['id']
     
-    return token_ids, market_id
+    return token_ids
 
 
 def get_mid_price(token_id):

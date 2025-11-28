@@ -115,3 +115,20 @@ def get_mid_price(token_id):
     response = requests.get(url)
     return float(response.json()['mid'])
 
+def get_exisiting_positions():
+    assets = []
+    FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
+
+    positions_url = f"https://data-api.polymarket.com/positions?user={FUNDER}"
+
+    response = requests.get(positions_url)
+
+    if response.status_code == 200:
+
+        positions = response.json()
+        if positions:
+            for position in positions:
+                asset = position['asset']
+                assets.append(asset)
+    return assets
+
