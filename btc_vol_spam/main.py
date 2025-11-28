@@ -1,5 +1,5 @@
 from model import *
-from spam_utils import *
+from spam_utils import get_current_orders, get_exisiting_positions, place_order
 from send_telegram_message import send_telegram_message
 import time
 
