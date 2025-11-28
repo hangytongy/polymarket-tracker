@@ -109,10 +109,9 @@ def get_current_and_last15(symbol="BTCUSDT"):
     # --- Get last finished 15m candle ---
     k15 = client.get_klines(symbol=symbol, interval=Client.KLINE_INTERVAL_15MINUTE, limit=2)
     last_15m_close = float(k15[-2][4])
-    last_15m_start = pd.to_datetime(k15[-2][0], unit='ms')
     
     # Time left until next 15-min candle
-    now = datetime.datetime.utcnow()
+    now = datetime.utcnow()
     mins = now.minute
     next_interval_min = (mins // 15 + 1) * 15
     next_interval = now.replace(minute=0, second=0, microsecond=0) + pd.Timedelta(minutes=next_interval_min)
