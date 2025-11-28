@@ -29,6 +29,7 @@ while True:
 
         #check for current pos and if have, skip if set_no_buy_if_got_existingPos = True
         assets = get_exisiting_positions()
+        print(f"assets : {assets}")
         #if there is a current position
         if token_id in assets:
             print("already have exisitng positions no place order")
@@ -40,12 +41,12 @@ while True:
             print(current_orders)
             buy_orders = [order for order in current_orders if order['side'] == 'BUY']
             if not buy_orders:
-                if time_left > 1 and mid_price < 0.98 and mid_price > 0.03:
+                if time_left < 7 and mid_price < 0.98 and mid_price > 0.03:
                     place_order(token_id, mid_price,size)
                     message = f"placed order for BTC at {mid_price} with prob {prob}"
                     send_telegram_message(message)
         else:
-            if time_left > 1 and mid_price < 0.98 and mid_price > 0.03:
+            if time_left < 7 and mid_price < 0.98 and mid_price > 0.03:
                 place_order(token_id, mid_price,size)
                 message = f"placed order for BTC at {mid_price} with prob {prob}"
                 send_telegram_message(message)
