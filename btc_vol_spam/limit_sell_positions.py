@@ -4,7 +4,7 @@ import requests
 from send_telegram_message import send_telegram_message
 import pandas as pd
 dotenv.load_dotenv()
-from utils import *
+from spam_utils import *
 
 SET_NEVER_BELOW_COST=os.getenv("SET_NEVER_BELOW_COST","1") == "1"
 

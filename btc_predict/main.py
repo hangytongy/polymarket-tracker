@@ -3,7 +3,7 @@ from predict_utils import *
 from send_telegram_message import send_telegram_message
 import time
 
-size = 10
+size = 5
 
 while True:
 
@@ -13,11 +13,11 @@ while True:
 
     prob, conf, time_left = get_probability()
 
-    if prob > 0.75 and conf > 0.7:
+    if prob > 0.75 and conf > 0.8:
         print("yes, BTC will be higher")
         token_id = token_ids[0]
         
-    elif prob < 0.1 and conf >0.7:
+    elif prob < 0.095 and conf >0.8:
         print("no, BTC will be lower")
         token_id = token_ids[1]
         
