@@ -23,6 +23,7 @@ while True:
         
     else:
         print("nothing, pass")
+        token_id = None
         
     if token_id:
         mid_price = get_mid_price(token_id)
