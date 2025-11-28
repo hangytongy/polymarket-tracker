@@ -1,6 +1,9 @@
 import subprocess
 import time
 import os
+import dotenv
+
+dotenv.load_dotenv()
 
 LOCK_FILE = "/tmp/btc_running.lock"
 
@@ -15,6 +18,7 @@ def remove_lock():
         os.remove(LOCK_FILE)
 
 while True:
+    SELL_SLEEP_TIME = int(os.getenv("SELL_SLEEP_TIME"))
     if not is_running():
         try:
             create_lock()
@@ -29,4 +33,4 @@ while True:
     else:
         print("Skipping run — previous one still active.")
     
-    time.sleep(5)   # run every 30 seconds
+    time.sleep(SELL_SLEEP_TIME)   # run every 30 seconds

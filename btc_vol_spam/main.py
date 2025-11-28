@@ -16,6 +16,7 @@ while True:
     size = int(os.getenv("SIZE"))
     MAX_PRICE = float(os.getenv("MAX_PRICE"))
     MAX_TIME_LEFT = float(os.getenv("MAX_TIME_LEFT"))
+    BUY_SLEEP_TIME= int(os.getenv("BUY_SLEEP_TIME"))
 
     timestamp = get_timestamp() #only need to be done every 15min
 
@@ -54,6 +55,6 @@ while True:
                 else:
                     print(f"mid price {mid_price} not at {MAX_PRICE}")
         
-    time.sleep(5)
+    time.sleep(BUY_SLEEP_TIME)
 
 
