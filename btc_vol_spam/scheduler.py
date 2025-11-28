@@ -21,7 +21,7 @@ while True:
             print("Running BTC limit_sell_positions.py...")
             subprocess.run(
                 ["venv/bin/python3", "limit_sell_positions.py"],
-                cwd="/root/polymarket-tracker/btc_predict",
+                cwd="/root/polymarket-tracker/btc_vol_spam",
                 check=False
             )
         finally:

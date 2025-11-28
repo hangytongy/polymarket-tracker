@@ -33,11 +33,15 @@ while True:
                         place_order(token_id, mid_price,size)
                         message = f"placed order for BTC at {mid_price}"
                         send_telegram_message(message)
+                    else:
+                        print(f"mid price {mid_price} not at {MAX_PRICE}")
             else:
                 if mid_price > MAX_PRICE:
                     place_order(token_id, mid_price,size)
                     message = f"placed order for BTC at {mid_price}"
                     send_telegram_message(message)
+                else:
+                    print(f"mid price {mid_price} not at {MAX_PRICE}")
         
     time.sleep(15)
 

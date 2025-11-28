@@ -1,10 +1,4 @@
-import pandas as pd
-import numpy as np
-import time
 from binance.client import Client
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, roc_auc_score
-from lightgbm import LGBMClassifier
 import requests
 import json
 from datetime import datetime, timedelta
