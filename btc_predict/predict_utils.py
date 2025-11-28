@@ -122,7 +122,6 @@ def get_exisiting_positions():
     positions_url = f"https://data-api.polymarket.com/positions?user={FUNDER}"
 
     response = requests.get(positions_url)
-    print(response)
 
     if response.status_code == 200:
 
