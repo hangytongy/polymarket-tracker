@@ -45,7 +45,7 @@ if response.status_code == 200:
                 curr_price = float(response.json()['mid'])
                 print(f"price = {curr_price}")
 
-                sell_price = 0.98
+                sell_price = 0.99
 
                 #if prices now is lower than buy in price
                 if curr_price < avg_price:

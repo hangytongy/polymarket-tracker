@@ -2,10 +2,14 @@ from model import *
 from spam_utils import get_current_orders, get_exisiting_positions, place_order
 from send_telegram_message import send_telegram_message
 import time
+import os
+import dotenv
 
-size = 10
-MAX_PRICE = 0.935
-MAX_TIME_LEFT = 2
+dotenv.load_dotenv()
+
+size = int(os.getenv("SIZE"))
+MAX_PRICE = float(os.getenv("MAX_PRICE"))
+MAX_TIME_LEFT = float(os.getenv("MAX_TIME_LEFT"))
 
 while True:
 
