@@ -38,8 +38,9 @@ if response.status_code == 200:
             decimal_places = 2
 
             #get mid price
-
-            ori_price = get_mid_price(asset)
+            url = f"https://clob.polymarket.com/midpoint?token_id={asset}"
+            response = requests.get(url)
+            ori_price = response.json()['mid']
             print(f"price = {ori_price}")
 
             #if >10% gains sell
