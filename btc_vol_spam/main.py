@@ -5,17 +5,11 @@ import time
 import os
 import dotenv
 
-<<<<<<< HEAD
 dotenv.load_dotenv()
 
 size = int(os.getenv("SIZE"))
 MAX_PRICE = float(os.getenv("MAX_PRICE"))
 MAX_TIME_LEFT = float(os.getenv("MAX_TIME_LEFT"))
-=======
-size = 10
-MAX_PRICE = 0.935
-MAX_TIME_LEFT = 3
->>>>>>> 79d27d9e816b21696957fd9485788a7c80e79fff
 
 while True:
 
