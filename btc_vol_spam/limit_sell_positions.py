@@ -31,7 +31,7 @@ if response.status_code == 200:
                 avg_price = position['avgPrice']
                 print(f"{question} {asset} {total_size} - {avg_price}")
 
-                if 'bitcoin' not in question.lower():
+                if 'bitcoin up or down' not in question.lower():
                     print("skip this question")
                     continue
 
@@ -45,8 +45,7 @@ if response.status_code == 200:
                 curr_price = float(response.json()['mid'])
                 print(f"price = {curr_price}")
 
-                #if >10% gains sell
-                sell_price = avg_price * 1.1
+                sell_price = 0.98
 
                 #if prices now is lower than buy in price
                 if curr_price < avg_price:
@@ -61,12 +60,6 @@ if response.status_code == 200:
                     price = curr_price
                 else:
                     price = sell_price
-
-                if price < 0.01:
-                    price = 0.01
-                    
-                if price > 0.99:
-                    price = 0.99
 
                 sell_count = 0
 
