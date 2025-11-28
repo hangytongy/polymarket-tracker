@@ -5,7 +5,7 @@ import time
 
 size = 10
 MAX_PRICE = 0.935
-MAX_TIME_LEFT = 2
+MAX_TIME_LEFT = 3
 
 while True:
 
