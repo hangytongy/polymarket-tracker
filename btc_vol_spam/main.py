@@ -7,11 +7,15 @@ import dotenv
 
 dotenv.load_dotenv()
 
-size = int(os.getenv("SIZE"))
-MAX_PRICE = float(os.getenv("MAX_PRICE"))
-MAX_TIME_LEFT = float(os.getenv("MAX_TIME_LEFT"))
+#size = int(os.getenv("SIZE"))
+#MAX_PRICE = float(os.getenv("MAX_PRICE"))
+#MAX_TIME_LEFT = float(os.getenv("MAX_TIME_LEFT"))
 
 while True:
+
+    size = int(os.getenv("SIZE"))
+    MAX_PRICE = float(os.getenv("MAX_PRICE"))
+    MAX_TIME_LEFT = float(os.getenv("MAX_TIME_LEFT"))
 
     timestamp = get_timestamp() #only need to be done every 15min
 
