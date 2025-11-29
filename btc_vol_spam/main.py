@@ -16,6 +16,7 @@ while True:
     size = int(os.getenv("SIZE"))
     MAX_PRICE = float(os.getenv("MAX_PRICE"))
     MAX_TIME_LEFT = float(os.getenv("MAX_TIME_LEFT"))
+    MIN_TIME_LEFT = float(os.getenv("MIN_TIME_LEFT"))
     BUY_SLEEP_TIME= int(os.getenv("BUY_SLEEP_TIME"))
 
     timestamp = get_timestamp() #only need to be done every 15min
@@ -41,14 +42,14 @@ while True:
                 print(current_orders)
                 buy_orders = [order for order in current_orders if order['side'] == 'BUY']
                 if not buy_orders:
-                    if mid_price >= MAX_PRICE and mid_price < 0.99 and time_left < MAX_TIME_LEFT:
+                    if mid_price >= MAX_PRICE and mid_price < 0.99 and time_left < MAX_TIME_LEFT and time_left > MIN_TIME_LEFT:
                         place_order(token_id, mid_price,size)
                         message = f"placed order for BTC at {mid_price} for timestamp {timestamp}"
                         send_telegram_message(message)
                     else:
                         print(f"mid price {mid_price} not at {MAX_PRICE}")
             else:
-                if mid_price >= MAX_PRICE and mid_price < 0.99 and time_left < MAX_TIME_LEFT:
+                if mid_price >= MAX_PRICE and mid_price < 0.99 and time_left < MAX_TIME_LEFT and time_left > MIN_TIME_LEFT:
                     place_order(token_id, mid_price,size)
                     message = f"placed order for BTC at {mid_price} for timestamp {timestamp}"
                     send_telegram_message(message)

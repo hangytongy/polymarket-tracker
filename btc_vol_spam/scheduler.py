@@ -18,7 +18,7 @@ def remove_lock():
         os.remove(LOCK_FILE)
 
 while True:
-    SELL_SLEEP_TIME = int(os.getenv("SELL_SLEEP_TIME"))
+    
     if not is_running():
         try:
             create_lock()
@@ -32,5 +32,6 @@ while True:
             remove_lock()
     else:
         print("Skipping run — previous one still active.")
-    
+
+    SELL_SLEEP_TIME = int(os.getenv("SELL_SLEEP_TIME"))
     time.sleep(SELL_SLEEP_TIME)   # run every 30 seconds
