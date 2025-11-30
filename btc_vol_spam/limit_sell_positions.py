@@ -7,6 +7,7 @@ dotenv.load_dotenv()
 from spam_utils import *
 
 SET_NEVER_BELOW_COST=os.getenv("SET_NEVER_BELOW_COST","0") == "1"
+SELL_PRICE=float(os.getenv("SELL_PRICE"))
 
 FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
 
@@ -45,7 +46,7 @@ if response.status_code == 200:
                 curr_price = float(response.json()['mid'])
                 print(f"price = {curr_price}")
 
-                sell_price = 0.99
+                sell_price = SELL_PRICE
 
                 #if prices now is lower than buy in price
                 if curr_price < avg_price:
