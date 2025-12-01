@@ -44,9 +44,10 @@ if response.status_code == 200:
                 response = requests.get(url)
                 print(response.json())
                 curr_price = float(response.json()['mid'])
-                print(f"price = {curr_price}")
+                print(f"now price = {curr_price}")
 
                 sell_price = SELL_PRICE
+                sell_price = min(SELL_PRICE,avg_price * 1.1)
 
                 #if prices now is lower than buy in price
                 if curr_price < avg_price:
@@ -63,6 +64,8 @@ if response.status_code == 200:
                     price = curr_price
                 else:
                     price = sell_price
+
+                price = round(price,decimal_places)
 
                 sell_count = 0
 

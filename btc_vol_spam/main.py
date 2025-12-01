@@ -1,5 +1,5 @@
 from model import *
-from spam_utils import get_current_orders, get_exisiting_positions, place_order
+from spam_utils import get_current_orders, get_exisiting_positions, place_order, cancel_order
 from send_telegram_message import send_telegram_message
 import time
 import os
@@ -48,6 +48,13 @@ while True:
                         send_telegram_message(message)
                     else:
                         print(f"mid price {mid_price} not at {MAX_PRICE}")
+                else:
+                    for order in buy_orders:
+                        if time_left < MIN_TIME_LEFT:
+                            order_id = order['id']
+                            cancel_order(order_id)
+                            message = f"BTC order out of time range {time_left}, cancel"
+                            send_telegram_message(message)
             else:
                 if mid_price >= MAX_PRICE and mid_price < 0.99 and time_left < MAX_TIME_LEFT and time_left > MIN_TIME_LEFT:
                     place_order(token_id, mid_price,size)
