@@ -33,5 +33,5 @@ while True:
     else:
         print("Skipping run — previous one still active.")
 
-    SELL_SLEEP_TIME = int(os.getenv("SELL_SLEEP_TIME"))
+    SELL_SLEEP_TIME = float(os.getenv("SELL_SLEEP_TIME"))
     time.sleep(SELL_SLEEP_TIME)   # run every 30 seconds

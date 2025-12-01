@@ -52,11 +52,11 @@ if response.status_code == 200:
                 #if prices now is lower than buy in price
                 if curr_price < avg_price:
                     #if dont want to lose a single cent
-                    if SET_NEVER_BELOW_COST:
-                        print("skip, price is lower than avg price")
-                        price = round(avg_price,decimal_places)
+                    #if SET_NEVER_BELOW_COST:
+                    #    print("skip, price is lower than avg price")
+                    #    price = round(avg_price,decimal_places)
                     #if hit stop loss
-                    elif curr_price < avg_price * 0.8:
+                    if curr_price < avg_price * 0.8:
                         price = round(curr_price,decimal_places)
                     else:
                         price = sell_price
