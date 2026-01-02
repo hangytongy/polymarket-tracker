@@ -47,7 +47,10 @@ if response.status_code == 200:
                 print(f"now price = {curr_price}")
 
                 sell_price = SELL_PRICE
-                sell_price = min(SELL_PRICE,avg_price * 1.1)
+                if avg_price * 1.1 > 0.99:
+                    sell_price = 0.99
+                else:
+                    sell_price = min(SELL_PRICE,avg_price * 1.1)
 
                 #if prices now is lower than buy in price
                 if curr_price < avg_price:
