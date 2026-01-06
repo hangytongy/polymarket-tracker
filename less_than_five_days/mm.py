@@ -13,10 +13,10 @@ def round_down(value, decimals):
     factor = 10 ** decimals
     return math.floor(value * factor) / factor
 
-buy_in_size = 3 
-my_min_size = 3
-max_no_of_markets = 5
-my_max_amt = int(os.getenv("MAX_AMT", "50"))
+buy_in_size = 5
+my_min_size = 5
+max_no_of_markets = 10
+my_max_amt = int(os.getenv("MAX_AMT", "20"))
 my_min_amt = int(os.getenv("MIN_AMT", "10"))
 size_agression = float(os.getenv("SIZE_AGRESSION", "0.02")) #% of total bid rewards liquidity
 agression = float(os.getenv("AGRESSION", "0.5")) # 0.1-0.9
