@@ -12,7 +12,7 @@ CHAIN_ID  = 137  # Polygon mainnet
 PRIVATE_KEY = os.getenv("POLY_PRIVATE_KEY")
 FUNDER      = os.getenv("POLY_FUNDER_ADDRESS")
 
-MIN_SCALE_AMT = int(os.getenv("MIN_SCALE_AMT","100"))
+MIN_SCALE_AMT = int(os.getenv("MIN_SCALE_AMT","1"))
 
 client = ClobClient(
         HOST,

@@ -15,6 +15,7 @@ def round_down(value, decimals):
 
 buy_in_size = 3 
 my_min_size = 3
+max_no_of_markets = 5
 my_max_amt = int(os.getenv("MAX_AMT", "50"))
 my_min_amt = int(os.getenv("MIN_AMT", "10"))
 size_agression = float(os.getenv("SIZE_AGRESSION", "0.02")) #% of total bid rewards liquidity
@@ -30,6 +31,9 @@ try:
     file_path = MARKETS_DIR  # Change to your actual CSV file path
 
     df = pd.read_csv(file_path, usecols=['question','market_id', 'side','token_id'], dtype={'question' : str,'market_id': str, 'side': str, 'token_id': str})
+    
+    #Get only the top X rows
+    df = df[:max_no_of_markets]
 
     # === STEP 2: Validate columns ===
     required_cols = {'question','market_id', 'side', 'token_id'}
