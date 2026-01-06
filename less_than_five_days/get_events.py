@@ -8,6 +8,7 @@ from utils import get_token_id
 from orders import get_current_orders, cancel_order
 
 MARKETS_DIR = os.getenv('MARKETS_DIR')
+max_no_of_markets = int(os.getenv('MAX_NO_MARKETS',"10"))
 
 
 def get_events(category):
@@ -164,6 +165,9 @@ if events_can_mm:
 
     # 3. Rename, filter for only those columns, and save
     df = df.rename(columns=column_mapping)[list(column_mapping.values())]
+
+    #Get only the top X rows
+    df = df[:max_no_of_markets]
     df.to_csv("markets.csv", index=False)
 
     print(f"Saved {len(df)} rows to markets.csv")
