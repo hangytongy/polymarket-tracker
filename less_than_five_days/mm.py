@@ -93,7 +93,12 @@ try:
                     continue
                 
                 #get bid_price
-                bids = ob_data['bids']
+                clean_data = {
+                "bids": [float(item['price']) for item in ob_data['bids']],
+                "asks": [float(item['price']) for item in ob_data['asks']]
+                    }
+                
+                bids = clean_data['bids']
                 max_bid_price = max(bids)
                 
                 #Bid price is current max bid - 1 tick
