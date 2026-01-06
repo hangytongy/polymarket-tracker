@@ -163,7 +163,8 @@ if events_can_mm:
     }
 
     # 3. Rename, filter for only those columns, and save
-    df.rename(columns=column_mapping)[list(column_mapping.values())].to_csv("markets.csv", index=False)
+    df = df.rename(columns=column_mapping)[list(column_mapping.values())]
+    df.to_csv("markets.csv", index=False)
 
     print(f"Saved {len(df)} rows to markets.csv")
 
