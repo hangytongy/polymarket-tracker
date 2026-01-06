@@ -7,12 +7,8 @@ from orders import *
 import pandas as pd
 dotenv.load_dotenv()
 
-MANUALSELL_DIR = os.getenv("MANUALSELL_DIR")
 SET_NEVER_BELOW_COST=os.getenv("SET_NEVER_BELOW_COST","1") == "1"
 
-manual_sells = pd.read_csv(MANUALSELL_DIR)
-manual_sells['question'] = manual_sells['question'].apply(lambda x: x.lower())
-manual_sells_q = manual_sells['question'].tolist()
 
 
 FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
@@ -37,7 +33,7 @@ if response.status_code == 200:
             avg_price = position['avgPrice']
             print(f"{question} {asset} {total_size} - {avg_price}")
 
-            if question.lower() in manual_sells_q or "bitcoin up or down" in question.lower():
+            if "bitcoin up or down" in question.lower():
                 print("skip this question")
                 continue
 
