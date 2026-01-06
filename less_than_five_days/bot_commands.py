@@ -38,19 +38,14 @@ def bot_get_all_orders_info():
     use_async = os.getenv("USE_ASYNC", "0") == "1"
 
     try:
-        #if use async to run, also need to change in add_markets.py
-        if use_async:
-            all_rewards = asyncio.run(async_get_rewards())
-        else:
-            all_rewards = get_all_rewards()
 
         # === STEP 1: Load CSV ===
         file_path = os.getenv('MARKETS_DIR')   # Change to your actual CSV file path
 
-        df = pd.read_csv(file_path, usecols=['question','market_id', 'side'], dtype={'question' : str,'market_id': str, 'side': str})
+        df = pd.read_csv(file_path, usecols=['question','market_id', 'side','token_id'], dtype={'question' : str,'market_id': str, 'side': str, 'token_id': str})
 
         # === STEP 2: Validate columns ===
-        required_cols = {'question','market_id', 'side'}
+        required_cols = {'question','market_id', 'side', 'token_id'}
         missing_cols = required_cols - set(df.columns)
 
         if missing_cols:
@@ -59,28 +54,22 @@ def bot_get_all_orders_info():
         all_orders = get_all_orders()
 
         # === STEP 3: Continue with your logic ===
+        lookup = df.set_index('token_id').T.to_dict()
         all_data = []
-
-        # Build mapping: token_id -> (reward, index)
-        reward_map = {}
-
-        for reward in all_rewards:
-            for idx, tok in enumerate(reward['tokens_id']):
-                reward_map[tok] = (reward, idx)
 
         for order in all_orders:
             order_token_id = order['asset_id']
 
-            if order_token_id not in reward_map:
+            if order_token_id in lookup:
+                match = lookup[order_token_id]
+            else:
                 continue
-
-            reward, index = reward_map[order_token_id]
 
             token_id = order_token_id
             order_id = order['id']
-            outcome = reward['outcomes'][index]
-            question = reward['question']
-            market_id = reward['market_id']
+            question = match['question']
+            market_id = match['market_id']
+            outcome = match['side']
             side = order['side']
             size = order['original_size']
             price = order['price']
