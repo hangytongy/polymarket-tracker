@@ -145,7 +145,7 @@ if events_can_mm:
 
     #get all market ids in old markets.csv
     old_df = pd.read_csv("markets.csv")
-    old_market_ids = set(old_df['market_id'])
+    old_market_ids = set(old_df['market_id'].astype(str))
 
     #remove duplicate markets
     unique_events = list({event['id']: event for event in events_can_mm}.values())
@@ -170,7 +170,7 @@ if events_can_mm:
 
     if old_market_ids:
         #get new market id, compare with old and remove existing orders of old
-        new_market_ids = set(df['market_id'])
+        new_market_ids = set(df['market_id'].astype(str))
         dropped_ids = list(old_market_ids - new_market_ids)
 
         if dropped_ids:
