@@ -55,8 +55,8 @@ def place_order_scale(token_id, start_price, reward_bid_min, size, tick_size, mi
 
     # If too many steps, reduce them and spread evenly
     ORIGINAL_STEPS = steps
-    if steps > 5:
-        steps = max(3, steps // 3)  # prevent steps from becoming 1
+    if steps > 4:
+        steps = max(3, steps // 4)  # prevent steps from becoming 1
         print(f"Reducing steps from {ORIGINAL_STEPS} → {steps}")
 
         # Spread prices evenly between start and min price
