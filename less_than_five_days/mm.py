@@ -69,11 +69,13 @@ try:
                     #if no "buy the dip" or position value is more than max amount
                     if not set_buy_if_got_existingPos or value >= my_max_amt:
                         continue
-                
-                #get market orderbook
-                ob_data = get_orderbook_data(token_id)
+                try:
+                    #get market orderbook
+                    ob_data = get_orderbook_data(token_id)
 
-                if not ob_data['mid_price']:
+                    mid_price_ob = ob_data['mid_price']
+
+                except:
                     message = f"no mid price found in {question}, removing market"
                     send_telegram_message(message)
                     df = df[df['market_id'] != market_id]
