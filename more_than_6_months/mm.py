@@ -127,8 +127,8 @@ try:
                         print(f"there are buy orders {len(buy_orders)}")
 
                         buy_prices = [float(order['price']) for order in buy_orders]
-                        max_buy_price = max(buy_prices)
-                        min_buy_price = min(buy_prices)
+                        max_buy_price = round(max(buy_prices),decimal_places)
+                        min_buy_price = round(min(buy_prices),decimal_places)
 
                         #if market too volatile
                         #if (reward_mid_range - max_buy_price) > VOLATILITY_THRESHOLD:
