@@ -8,7 +8,7 @@ from utils import get_token_id
 from orders import get_current_orders, cancel_order
 
 MARKETS_DIR = os.getenv('MARKETS_DIR')
-max_no_of_markets = int(os.getenv('MAX_NO_MARKETS',"5"))
+max_no_of_markets = int(os.getenv('MAX_NO_MARKETS',"3"))
 
 
 def get_events(category):
@@ -94,10 +94,10 @@ def get_mm_markets(all_events):
                 time_diff = end_date - now
                 time_diff_days = time_diff.days
                 #print("time diff : ", time_diff_days)
-                # time less than 5 days left and price (yes/no) is more than 95%
-                if time_diff_days > 0 and time_diff_days <= 5:
+                # time more than 6 months and odds less than 5%
+                if time_diff_days > 30 * 6:
                     #print("This market is closing within 5 days, can MM")
-                    idx = 0 if yes_price > 0.95 else (1 if no_price >= 0.95 else None)
+                    idx = 0 if yes_price <= 0.05 else (1 if no_price <= 0.05 else None)
                     if idx is not None:
                     
                         d = {
@@ -183,6 +183,7 @@ if all_events:
 
 else:
     print("No markets can be MM")
+
 
 
 

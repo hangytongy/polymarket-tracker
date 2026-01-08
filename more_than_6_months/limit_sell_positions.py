@@ -22,7 +22,6 @@ if missing_cols:
 
 csv_questions_set = set(df['question'].str.lower())
 
-
 FUNDER = os.getenv("POLY_FUNDER_ADDRESS")
 
 positions_url = f"https://data-api.polymarket.com/positions?user={FUNDER}"
