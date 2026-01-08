@@ -170,9 +170,9 @@ try:
                                                     cancel_order(order_id)
                                             message = f"Order canceled for {market_id} {token_id} and {side}"
 
-                                    df = df[df['market_id'] != market_id]
-                                    df.to_csv(file_path, index=False)
-                                    print(f"✅ Removed market_id {market_id} from {file_path}")
+                                df = df[df['market_id'] != market_id]
+                                df.to_csv(file_path, index=False)
+                                print(f"✅ Removed market_id {market_id} from {file_path}")
 
                     else:
                         print(f'No current order in this market')
