@@ -106,7 +106,7 @@ try:
                 bid_price = max_bid_price - tick 
 
                 #min bid price is bid price - 2%, round up
-                bid_min = round(max_bid_price * 0.98,decimal_places)
+                bid_min = calculate_bid_min(max_bid_price, decimal_places)
 
                 #get size
                 size = buy_in_size

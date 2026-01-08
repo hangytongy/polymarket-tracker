@@ -661,3 +661,14 @@ def get_exisiting_positions():
                 value = position['initialValue']
                 values.append(value)
     return assets, values
+
+def calculate_bid_min(max_bid_price, decimal_places):
+    tick_size = 10 ** -decimal_places
+    
+    # Ensure distance is at least 1 tick, or 0.005, whichever is larger
+    distance = max(0.005, tick_size)
+    
+    raw_min = max_bid_price - distance
+    bid_min = (raw_min // tick_size) * tick_size
+    
+    return round(max(bid_min, tick_size), decimal_places)
