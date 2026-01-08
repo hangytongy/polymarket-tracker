@@ -154,8 +154,25 @@ try:
                                 message = f"{str(resp)} \n\nOrder out of reward range, cancel old and placed order at {bid_price} to {bid_min} for {question} and {side} and size {size}"
                                 send_telegram_message(message)
                             else:
-                                message = f"Error placing scale order -> either steps is 0 or size per order less than reward size"
+                                message = f"Error placing scale order -> steps is 0, removing from market...."
                                 send_telegram_message(message)
+
+                                token_ids = get_token_id(market_id)
+
+                                if token_ids:
+                                    for token_id in token_ids:
+
+                                        orders = get_current_orders(token_id)
+                                        if orders:
+                                            for order in orders:   
+                                                if order['side'] =="BUY":
+                                                    order_id = order['id']
+                                                    cancel_order(order_id)
+                                            message = f"Order canceled for {market_id} {token_id} and {side}"
+
+                                    df = df[df['market_id'] != market_id]
+                                    df.to_csv(file_path, index=False)
+                                    print(f"✅ Removed market_id {market_id} from {file_path}")
 
                     else:
                         print(f'No current order in this market')
