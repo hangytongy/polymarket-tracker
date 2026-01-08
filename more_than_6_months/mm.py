@@ -190,6 +190,9 @@ try:
                         else:
                             message = f"Error placing scale order -> either steps is 0 or size per order less than reward size"
                             send_telegram_message(message)
+                            df = df[df['market_id'] != market_id]
+                            df.to_csv(file_path, index=False)
+                            print(f"✅ Removed market_id {market_id} from {file_path}")
                 else:
                     print(f'No current order in this market')
 
