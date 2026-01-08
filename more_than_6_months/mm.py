@@ -103,7 +103,7 @@ try:
                 max_bid_price = max(bids)
                 
                 #Bid price is current max bid - 1 tick
-                bid_price = max_bid_price - tick 
+                bid_price = round(max_bid_price - tick,decimal_places) 
 
                 #min bid price is bid price - 2%, round up
                 bid_min = calculate_bid_min(max_bid_price, decimal_places)
@@ -209,6 +209,9 @@ try:
                     else:
                         message = f"Error placing scale order -> either steps is 0 or size per order less than reward size"
                         send_telegram_message(message)
+                        df = df[df['market_id'] != market_id]
+                        df.to_csv(file_path, index=False)
+                        print(f"✅ Removed market_id {market_id} from {file_path}")
 
 
             else:
