@@ -21,7 +21,7 @@
       {
         "name": "polymarkets_6m_sell_pos_limit",
         "script": "venv/bin/python3",
-        "cron_restart": "*/3 * * * *",
+        "cron_restart": "*/5 * * * *",
         "autorestart" : false,
         "time": true,
         "args" : "limit_sell_positions.py",
