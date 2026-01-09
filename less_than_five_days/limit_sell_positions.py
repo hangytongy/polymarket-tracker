@@ -70,10 +70,11 @@ if response.status_code == 200:
             print(f"price = {price}")
 
             #New avg price
-            if decimal_places == 0:
-                avg_price = avg_price + float(tick)
-            else:
-                avg_price = avg_price + float(tick) * 5
+            avg_price = 1 - float(tick)
+            #if decimal_places == 0:
+            #    avg_price = avg_price + float(tick)
+            #else:
+            #    avg_price = avg_price + float(tick) * 5
 
             if price < avg_price and SET_NEVER_BELOW_COST:
                 print("skip, price is lower than avg price")

@@ -103,7 +103,7 @@ try:
                 max_bid_price = max(bids)
                 
                 #Bid price is current max bid - 1 tick
-                bid_price = max_bid_price - tick 
+                bid_price = round(max_bid_price - tick, decimal_places)
 
                 #min bid price is bid price - 2%, round up
                 bid_min = round(max_bid_price * 0.98,decimal_places)

@@ -21,7 +21,7 @@ while True:
             print("Running rewards.py...")
             subprocess.run(
                 ["venv/bin/python3", "mm.py"],
-                cwd="/root/polymarket-tracker/less_than_five_days",
+                cwd="/root/polymarket-tracker/more_than_6_months",
                 check=False
             )
         finally:

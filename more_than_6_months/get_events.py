@@ -8,8 +8,8 @@ from utils import get_token_id
 from orders import get_current_orders, cancel_order
 
 MARKETS_DIR = os.getenv('MARKETS_DIR')
-max_no_of_markets = int(os.getenv('MAX_NO_MARKETS',"3"))
-
+max_no_of_markets = int(os.getenv('MAX_NO_MARKETS',"15"))
+max_markets_per_event = int(os.getenv('MAX_NO_MARKETS_PER_EVENT',"3"))
 
 def get_events(category):
 
@@ -60,6 +60,11 @@ def get_mm_markets(all_events):
     for event in all_events:
 
         markets = event["markets"]
+
+        event_no_of_markets = len(markets)
+
+        if event_no_of_markets > max_markets_per_event:
+            continue
 
         for market in markets:
 
@@ -134,7 +139,7 @@ def remove_old_markets(market_id):
 
 all_events = []
 
-CATEGORIES = ['economy', 'world', 'politics', 'tech']
+CATEGORIES = ['economy', 'world', 'politics', 'tech', 'geopolitics']
 
 for category in CATEGORIES:
     events_category = get_events(category)
