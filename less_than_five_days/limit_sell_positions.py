@@ -70,7 +70,11 @@ if response.status_code == 200:
             print(f"price = {price}")
 
             #New avg price
-            avg_price = 1 - float(tick)
+            wanted_price = avg_price + 0.01
+            if wanted_price >= 1:
+                avg_price = 1 - float(tick)
+            else:
+                avg_price = wanted_price
             #if decimal_places == 0:
             #    avg_price = avg_price + float(tick)
             #else:
