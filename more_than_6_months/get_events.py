@@ -139,7 +139,7 @@ def remove_old_markets(market_id):
 
 all_events = []
 
-CATEGORIES = ['economy', 'world', 'politics', 'tech', 'geopolitics']
+CATEGORIES = ['economy', 'world', 'politics','geopolitics']
 
 for category in CATEGORIES:
     events_category = get_events(category)

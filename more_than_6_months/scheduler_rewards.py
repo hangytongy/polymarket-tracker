@@ -2,7 +2,7 @@ import subprocess
 import time
 import os
 
-LOCK_FILE = "/tmp/rewards_running.lock"
+LOCK_FILE = "/tmp/6m_rewards_running.lock"
 
 def is_running():
     return os.path.exists(LOCK_FILE)
