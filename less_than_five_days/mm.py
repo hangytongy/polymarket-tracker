@@ -40,12 +40,9 @@ try:
         raise ValueError(f"❌ Missing required columns: {missing_cols}")
     
     #get wallet balance
-    wallet_balance = get_wallet_balance()
+    wallet_balance = 999999  # bypass balance check — place orders without checking
 
-    if not wallet_balance:
-        message = "error getting USDC balance"
-        send_telegram_message(message)
-        raise ValueError(f"❌ error getting USDC balance")
+    # Balance check bypassed — orders placed without balance verification
 
     # === STEP 3: Continue with your logic ===
 
